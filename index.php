@@ -9,8 +9,16 @@ $pageScript = 'script-index.js'; ?>
 
 <div class = "wrapper">
     
-        <div class = "randomRegister-Container"> </div>
-        <main class = "register-container"> </main>
+
+    <form style="flex-wrap: collumn;">
+    <input type = "checkbox" checked>first </input>
+    <input type = "checkbox" >best </input>
+    <input type = "checkbox" >worst </input>
+    <input type = "checkbox" >next </input>
+
+    </form>
+    <div class = "randomRegister-Container"> </div>
+    <main class = "register-container"> </main>
 
 
 </div>

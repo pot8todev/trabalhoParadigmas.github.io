@@ -29,13 +29,80 @@ function dragEnd(Event, randomRegisterContainer) {
     randomRegisterContainer.isDragging = false;
     randomRegisterContainer.style.cursor = 'grab';
 }
+function firstFit(defualtRegisters, randomRegisterAmount) {
+    let blankSpaceCounter = 0;
+    let blankSpaceVector = [];
+    let foundMatch = false;
+
+    for (let index = 0; index < defualtRegisters.length; index++) {
+        const item = defualtRegisters[index];
+
+        if (foundMatch) break;
+
+        if (item.color === 'white') {
+            blankSpaceVector.push(item.register);
+            blankSpaceCounter++;
+
+            if (blankSpaceCounter === randomRegisterAmount) {
+                blankSpaceVector.forEach(blankSpace => {
+                    blankSpace.style.backgroundColor = 'blue';
+                });
+                // Marca o último alocado como salmon para nextFit
+                foundMatch = true;
+                break;
+            }
+        }
+        else {
+            blankSpaceCounter = 0;
+            blankSpaceVector = [];
+        }
+    }
+
+    if (!foundMatch) {
+        console.log("nao ha lugar valido");
+    }
+    return foundMatch;
+}
+
+function nextFit(defualtRegisters, randomRegisterAmount) {
+    let newArray = defualtRegisters;
+    let salmonIndex = -1;
+    let i = 0;
+
+    // Encontra o registro salmon
+    for (i = 0; i < defualtRegisters.length; i++) {
+        if (defualtRegisters[i].register.style.backgroundColor === 'salmon') {
+            break;
+        }
+    }
+
+    // Busca o próximo elemento branco após o salmon
+    for (i = i; i < defualtRegisters.length; i++) { // changed 'index' to 'i'
+        const register = defualtRegisters[i];
+
+        if (register.register.style.backgroundColor === 'white') {
+            salmonIndex = i;
+            let firstHalf = defualtRegisters.slice(i);
+            let secondHalf = defualtRegisters.slice(0, i);
+            newArray = firstHalf.concat(secondHalf);
+            break;
+        }
+    }
+
+    if (salmonIndex === -1) {
+        console.log("Nenhum registro salmon encontrado, usando firstFit normal");
+        return firstFit(defualtRegisters, randomRegisterAmount);
+    }
+
+    return firstFit(newArray, randomRegisterAmount);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     //------------- paint the used registers -------------
     const randomRegisterContainer = document.querySelector('.randomRegister-Container');
     const container = document.querySelector('.register-container');
 
-    const randRegisterAmout = getRandomInt(1, 5);
+    const randomRegisterAmount = getRandomInt(1, 5);
     const registerAmount = 60;
 
     let defualtRegisters = [];//register ande color
@@ -45,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let isFirstPurple_ever = true;
 
 
-    for (let i = 0; i < randRegisterAmout; i++) { //user draggable box
+    for (let i = 0; i < randomRegisterAmount; i++) { //user draggable box
         const randomRegister = document.createElement('div');
         randomRegister.className = 'randomRegister';
         randomRegisterContainer.appendChild(randomRegister); // added register parameter
@@ -88,13 +155,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     defualtRegisters.forEach(item => { // changed parameter name
+        let blankSpaceCounter = 0;
         if (item.isViolet) { // check the item's property, not the outer variable
             item.register.style.backgroundColor = 'salmon';
         }
         else {
             item.register.style.backgroundColor = item.color;
         }
+
     });
+    // firstFit(defualtRegisters, randomRegisterAmount);
+    // nextFit(defualtRegisters, randomRegisterAmount);
+
 
     //------------- Make randomRegisterContainer draggable-------------
     randomRegisterContainer.style.position = 'absolute';
