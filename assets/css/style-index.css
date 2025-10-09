@@ -1,22 +1,42 @@
+.randomRegister-Container,
 .register-container {
     display: flex;
     flex-direction: row;
     gap: 1px;
 
-    justify-content: center;
     /*align in x*/
-    align-items: center;
+    justify-content: center;
     /*align in y*/
-    /* wrap se não couber horizontalmente */
+    align-items: center;
 
     overflow-x: scroll;
     /* scroll horizontal se necessário */
     padding: 10px;
+    margin: 2%;
+    /* wrap se não couber horizontalmente */
     flex-wrap: nowrap;
     height: 87vh;
 }
 
+.randomRegister-Container {
+    opacity: 40%;
+    background-color: red;
+    height: 1px;
+    padding: 15px;
 
+    /*cursor type in script*/
+    overflow-x: hidden;
+    overflow-y: hidden;
+
+}
+
+.register-container {
+    align-items: left;
+    justify-content: flex-start;
+}
+
+
+.randomRegister,
 .register {
     border: 2px solid black;
     border-radius: 4px;
@@ -35,7 +55,7 @@
 
     /* interaction */
     transition: all 0.3s ease;
-    cursor: pointer;
+    /* cursor: pointer; */
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     background-color: #fff;
 }

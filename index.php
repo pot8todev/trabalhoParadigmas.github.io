@@ -8,21 +8,18 @@ $pageScript = 'script-index.js'; ?>
 <?php include('includes/header.php'); ?>
 
 <div class = "wrapper">
+        <div class = "randomRegister-Container">
 
-    <!-- <div id= "register"> -->
-    <!-- </div> -->
+        </div>
         <main class = "register-container">
-            <div class = "register">
-            </div>
+            <div class="register">
+</div>
+
         </main>
 teste2
 teste1
 
 
-    <!-- JS  manually given -->
-    <?php if (!empty($pageScript)): ?>
-        <script src = "assets/js/<?=htmlspecialchars($pageScript)?>" ></script>
-    <?php endif;?>
 </div>
 <?php include 'includes/footer.php'; ?>
 
