@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             else {
                 isFirstPurple_Row = false;
-                isViolet = false; // stop violet chain
+                isViolet = false; // para a cadeia de violetas
                 defualtRegisters.push({ register: register, color: 'purple', isViolet: false });
             }
             isFirstPurple_ever = false; // depois da primeira vez sempre acontece 
@@ -81,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else { // se for um registrador livre
             isFirstPurple_Row = true;
             isViolet = false; // changed from null to false
+            defualtRegisters.push({ register: register, color: 'white', isViolet: false });
         }
 
         container.appendChild(register);
