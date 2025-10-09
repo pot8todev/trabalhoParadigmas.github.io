@@ -10,14 +10,15 @@ $pageScript = 'script-index.js'; ?>
 <div class = "wrapper">
     
 
-    <form style="flex-wrap: collumn;">
-    <input type = "checkbox" checked>first </input>
-    <input type = "checkbox" >best </input>
-    <input type = "checkbox" >worst </input>
-    <input type = "checkbox" >next </input>
-
-    </form>
-    <div class = "randomRegister-Container"> </div>
+  <form class="radio-form">
+    <label><input type="radio" name="checked" value="first" checked> First Fit</label>
+    <label><input type="radio" name="checked" value="best"> Best Fit</label>
+    <label><input type="radio" name="checked" value="worst"> Worst Fit</label>
+    <label><input type="radio" name="checked" value="next"> Next Fit</label>
+  </form>
+    <div>
+        <div class = "randomRegister-Container"> </div>
+    </div>
     <main class = "register-container"> </main>
 
 

@@ -24,10 +24,13 @@
     height: 1px;
     padding: 15px;
 
-    /*cursor type in script*/
     overflow-x: hidden;
     overflow-y: hidden;
 
+    /* Center horizontally */
+    margin: 0 auto;
+    width: fit-content;
+    /* or set a fixed width, e.g. 300px */
 }
 
 .register-container {
