@@ -1,3 +1,4 @@
+
 const PALETTE = {
     occupied: 'purple',
     lastAlocated: 'salmon',
@@ -5,10 +6,21 @@ const PALETTE = {
     empty: 'white',
 };
 
-// Utility: random integer generator
+//----- Utility:------
+//random integer generator
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+//stop function
+function sleep(seconds) {
+    return new Promise(resolve => {
+        setTimeout(resolve, seconds * 1000);
+
+    })
+}
+//-----
+
 function resetRegisters(defaultRegisters) {
     defaultRegisters.forEach(item => {
         item.register.style.backgroundColor = item.color; // back to base color
@@ -108,117 +120,122 @@ function nextFit(defaultRegisters, randomRegisterAmount) {
 function bestFit(defaultRegisters, randomRegisterAmount) {
     let blankSpaceCounter = 0;
     let currentBlankSpaceBlock = [];
-    let blanckBlocks = []; // vector of  possible solutions
+    let blankBlocks = []; // vector of  possible solutions
     let foundMatch = false;
 
     for (let index = 0; index < defaultRegisters.length; index++) {
         const item = defaultRegisters[index];
 
-        // if (foundMatch) break;
-
         if (item.color === PALETTE.empty) {
-            currentBlankSpaceBlock.push(item.register);
+            currentBlankSpaceBlock.push(item);
             blankSpaceCounter++;
 
-        } else {// adds to pSV when it breaks
-            blanckBlocks.push(currentBlankSpaceBlock);
+        } else {// adds to validBlocks when it breaks
+
             if (currentBlankSpaceBlock.length === randomRegisterAmount) {// best case, quit
                 foundMatch = true; break;
             }
+            blankBlocks.push(currentBlankSpaceBlock);
             blankSpaceCounter = 0;
             currentBlankSpaceBlock = [];
 
         }
     }
     if (currentBlankSpaceBlock.length > 0) {
-        blanckBlocks.push(currentBlankSpaceBlock);
+        blankBlocks.push(currentBlankSpaceBlock);
     }
+
     if (foundMatch) {
-        let bestFitblock = blanckBlocks[blanckBlocks.length - 1]; //top vector is the one
-        bestFitblock.forEach(item => {
-            item.style.backgroundColor = PALETTE.correctAnswer;
+        let bestFitblock = blankBlocks[blankBlocks.length - 1]; //top vector is the one
+        //
+        bestFitblock.forEach(block => {
+            block.register.style.backgroundColor = PALETTE.correctAnswer;
         });
-    }
-    else if (blanckBlocks.length > 0) {
-        let bestFitBlock = blanckBlocks[0]; //it'll loot pSV 2 times, but thats okay
-
-        blanckBlocks.forEach(space => {//space is a vector
-            if (bestFitBlock.length > space.length) {
-                bestFitBlock = space;// bestfit holds the smallest externar Fragmetation
-            }
-        });
-        bestFitBlock.forEach(register => {
-            register.style.backgroundColor = PALETTE.correctAnswer;
-        }
-        );
-        foundMatch = true;
-
+        console.log("1 caso")
     }
     else {
-        console.log("nao ha lugar valido");
+
+        let validBlocks = blankBlocks.filter(block => block.length >= randomRegisterAmount);// o bloco deve ser maior ou igual a qnt dados alocados 
+        if (validBlocks.length === 0) {
+            console.log("nao ha lugar valido");
+            return false;
+        }
+        // Find the smallest valid block (Best Fit)
+        let bestFitBlock = validBlocks[0];
+        validBlocks.forEach(block => {
+            if (block.length <= bestFitBlock.length) { //BEST FIT strategy
+                bestFitBlock = block;
+            }
+        });
+        // Allocate in the best fit block
+        for (let i = 0; i < randomRegisterAmount; i++) {
+            bestFitBlock[i].register.style.backgroundColor = PALETTE.correctAnswer;
+            console.log(`Allocated ${randomRegisterAmount} registers in block of size ${bestFitBlock.length}`);
+        }
+        foundMatch = true;
+        console.log("2 caso")
     }
-
-
-
     return foundMatch;
 }
 
 function worstFit(defaultRegisters, randomRegisterAmount) {
     let blankSpaceCounter = 0;
     let currentBlankSpaceBlock = [];
-    let blanckBlocks = []; // vector of  possible solutions
+    let blankBlocks = []; // vector of  possible solutions
     let foundMatch = false;
 
     for (let index = 0; index < defaultRegisters.length; index++) {
         const item = defaultRegisters[index];
 
-        // if (foundMatch) break;
-
         if (item.color === PALETTE.empty) {
-            currentBlankSpaceBlock.push(item.register);
+            currentBlankSpaceBlock.push(item);
             blankSpaceCounter++;
 
-        } else {// adds to pSV when it breaks
-            blanckBlocks.push(currentBlankSpaceBlock);
+        } else {// adds to validBlocks when it breaks
+
             if (currentBlankSpaceBlock.length === randomRegisterAmount) {// best case, quit
                 foundMatch = true; break;
             }
+            blankBlocks.push(currentBlankSpaceBlock);
             blankSpaceCounter = 0;
             currentBlankSpaceBlock = [];
 
         }
     }
     if (currentBlankSpaceBlock.length > 0) {
-        blanckBlocks.push(currentBlankSpaceBlock);
+        blankBlocks.push(currentBlankSpaceBlock);
     }
+
     if (foundMatch) {
-        let bestFitblock = blanckBlocks[blanckBlocks.length - 1]; //top vector is the one
-        bestFitblock.forEach(item => {
-            item.style.backgroundColor = PALETTE.correctAnswer;
+        let worstFitblock = blankBlocks[blankBlocks.length - 1]; //top vector is the one
+        //
+        worstFitblock.forEach(block => {
+            block.register.style.backgroundColor = PALETTE.correctAnswer;
         });
-    }
-    else if (blanckBlocks.length > 0) {
-        let bestFitBlock = blanckBlocks[0]; //it'll loot pSV 2 times, but thats okay
-
-        blanckBlocks.forEach(space => {//space is a vector
-            if (bestFitBlock.length < space.length) {
-                bestFitBlock = space;// bestfit holds the BIGGEST external Fragmetation
-            }
-        });
-        bestFitBlock.forEach(register => {
-            register.style.backgroundColor = PALETTE.correctAnswer;
-        }
-        );
-        foundMatch = true;
-
+        console.log("1 caso")
     }
     else {
-        console.log("nao ha lugar valido");
 
+        let validBlocks = blankBlocks.filter(block => block.length >= randomRegisterAmount);// o bloco deve ser maior ou igual a qnt dados alocados 
+        if (validBlocks.length === 0) {
+            console.log("nao ha lugar valido");
+            return false;
+        }
+        // Find the smallest valid block (Best Fit)
+        let worstFitBlock = validBlocks[0];
+        validBlocks.forEach(block => {
+            if (block.length >= worstFitBlock.length) { //WORSE FIT strategy
+                worstFitBlock = block;
+            }
+        });
+        // Allocate in the best fit block
+        for (let i = 0; i < randomRegisterAmount; i++) {
+            worstFitBlock[i].register.style.backgroundColor = PALETTE.correctAnswer;
+            console.log(`Allocated ${randomRegisterAmount} registers in block of size ${worstFitBlock.length}`);
+        }
+        foundMatch = true;
+        console.log("2 caso")
     }
-
-
-
     return foundMatch;
 }
 
@@ -227,8 +244,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const randomRegisterContainer = document.querySelector('.randomRegister-Container');
     const container = document.querySelector('.register-container');
 
-    const randomRegisterAmount = getRandomInt(1, 8);
-    const registerAmount = 60;
+    const randomRegisterAmount = getRandomInt(1, 7);
+    const registerAmount = 100;
     let defaultRegisters = [];
 
     // --- Create draggable random registers ---
@@ -250,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const register = document.createElement('div');
         register.className = 'register';
 
-        if (Math.random() < 0.5) {
+        if (Math.random() < 0.1) {//purple odds
             if (isViolet) {
                 lastAlocated.push(register);
             } else if (isFirstPurple_ever || (isFirstPurple_Row && getRandomInt(1, 10) < 2)) {
@@ -311,15 +328,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
 
         }
-        if (!foundMatch) {
-
-            alert("not an available space, please consider deleting something");
-        }
+        // if (!foundMatch) {
+        //
+        //     alert("not an available space, please consider deleting something");
+        // }
     }
     runAlgorithm();
 
-    // --- Run when a radio is clicked ---
     document.querySelectorAll('input[name="checked"]').forEach(radio => {
-        radio.addEventListener('change', () => runAlgorithm());
+        radio.addEventListener('change', async () => {
+            resetRegisters(defaultRegisters);
+            await sleep(0.2); // Wait 0.1 seconds
+            runAlgorithm();
+        });
     });
 });
