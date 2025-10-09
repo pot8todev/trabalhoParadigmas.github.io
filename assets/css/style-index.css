@@ -1,0 +1,47 @@
+.register-container {
+    display: flex;
+    flex-direction: row;
+    gap: 1px;
+
+    justify-content: center;
+    /*align in x*/
+    align-items: center;
+    /*align in y*/
+    /* wrap se não couber horizontalmente */
+
+    overflow-x: scroll;
+    /* scroll horizontal se necessário */
+    padding: 10px;
+    flex-wrap: nowrap;
+    height: 87vh;
+}
+
+
+.register {
+    border: 2px solid black;
+    border-radius: 4px;
+
+    /* mais compacto */
+    flex: 0 0 10px;
+
+
+    /* size */
+    height: 10px;
+    width: 2%;
+    /* altura fixa */
+    display: flex;
+    /* para centralizar conteúdo */
+    align-items: center;
+
+    /* interaction */
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.register:hover {
+    background-color: purple;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}

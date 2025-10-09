@@ -1,0 +1,78 @@
+/* ===== Body ===== */
+body {
+    display: flex;
+    flex-direction: column;
+    /* stack header, main, footer vertically */
+    min-height: 100vh;
+    /* full viewport height */
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+}
+
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 15px 20px;
+}
+
+
+main {
+    flex: 1;
+}
+
+/* ===== Header and Footer ===== */
+header,
+footer {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    /* empilha header, main e footer */
+    min-height: 87vh;
+    /* garante altura mínima da tela */
+}
+
+.content {
+    flex: 1;
+    /* faz o main ocupar o espaço restante */
+}
+
+/* ===== Box container ===== */
+.box-container {
+    display: flex;
+    /* horizontal alignment of boxes */
+    gap: 20px;
+    /* space between boxes */
+    flex-wrap: wrap;
+    /* wrap to new line if needed */
+    padding: 20px;
+    justify-content: flex-start;
+    /* align boxes to left */
+}
+
+/* ===== Box ===== */
+.box {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    flex: 1 1 200px;
+    /* grow/shrink, minimum width 200px */
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+}
+
+/* Hover effect for boxes */
+.box:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
