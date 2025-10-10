@@ -26,30 +26,6 @@ function resetRegisters(defaultRegisters) {
         item.register.style.backgroundColor = item.color; // back to base color
     });
 }
-// Drag functions
-function dragStart(Event, element) {
-    element.isDragging = true;
-    element.initialX = Event.clientX - (element.xOffset || 0);
-    element.initialY = Event.clientY - (element.yOffset || 0);
-}
-
-function drag(Event, element) {
-    if (element.isDragging) {
-        Event.preventDefault();
-        const dX = Event.clientX - element.initialX;
-        const dY = Event.clientY - element.initialY;
-
-        element.xOffset = dX;
-        element.yOffset = dY;
-        element.style.cursor = 'grabbing';
-        element.style.transform = `translate(${dX}px, ${dY}px)`;
-    }
-}
-
-function dragEnd(Event, element) {
-    element.isDragging = false;
-    element.style.cursor = 'grab';
-}
 
 // Allocation algorithms
 function firstFit(defaultRegisters, randomRegisterAmount) {
@@ -118,126 +94,129 @@ function nextFit(defaultRegisters, randomRegisterAmount) {
 
 
 function bestFit(defaultRegisters, randomRegisterAmount) {
-    let blankSpaceCounter = 0;
-    let currentBlankSpaceBlock = [];
-    let blankBlocks = []; // vector of  possible solutions
-    let foundMatch = false;
+    let currentBlock = [];
+    let allBlankBlocks = []; // vector of  possible solutions
+    let exactMatch = null;
+    let bestBlock;
 
     for (let index = 0; index < defaultRegisters.length; index++) {
         const item = defaultRegisters[index];
 
         if (item.color === PALETTE.empty) {
-            currentBlankSpaceBlock.push(item);
-            blankSpaceCounter++;
+            currentBlock.push(item);
 
         } else {// adds to validBlocks when it breaks
 
-            if (currentBlankSpaceBlock.length === randomRegisterAmount) {// best case, quit
-                foundMatch = true; break;
+            if (currentBlock.length === randomRegisterAmount) {// best case, quit
+                exactMatch = currentBlock;
+                break;
             }
-            blankBlocks.push(currentBlankSpaceBlock);
-            blankSpaceCounter = 0;
-            currentBlankSpaceBlock = [];
+            allBlankBlocks.push(currentBlock);
+            currentBlock = [];
 
         }
     }
-    if (currentBlankSpaceBlock.length > 0) {
-        blankBlocks.push(currentBlankSpaceBlock);
+
+    //adiciona ultimo elemento, se o 
+    if (!exactMatch && currentBlock.length > 0) {
+        if (currentBlock.length === randomRegisterAmount) {
+            exactMatch = currentBlock;
+        } else {
+            allBlankBlocks.push(currentBlock);
+        }
     }
 
-    if (foundMatch) {
-        let bestFitblock = blankBlocks[blankBlocks.length - 1]; //top vector is the one
-        //
-        bestFitblock.forEach(block => {
-            block.register.style.backgroundColor = PALETTE.correctAnswer;
-        });
-        console.log("1 caso")
+    if (exactMatch) {
+        bestBlock = exactMatch;
+        console.log("Match exato encontrado!");
     }
     else {
 
-        let validBlocks = blankBlocks.filter(block => block.length >= randomRegisterAmount);// o bloco deve ser maior ou igual a qnt dados alocados 
+        let validBlocks = allBlankBlocks.filter(block => block.length >= randomRegisterAmount);// o bloco deve ser maior ou igual a qnt dados alocados 
         if (validBlocks.length === 0) {
             console.log("nao ha lugar valido");
             return false;
         }
         // Find the smallest valid block (Best Fit)
-        let bestFitBlock = validBlocks[0];
+        bestBlock = validBlocks[0];
         validBlocks.forEach(block => {
-            if (block.length <= bestFitBlock.length) { //BEST FIT strategy
-                bestFitBlock = block;
+            if (block.length <= bestBlock.length) { //BEST FIT strategy
+                bestBlock = block;
             }
         });
         // Allocate in the best fit block
-        for (let i = 0; i < randomRegisterAmount; i++) {
-            bestFitBlock[i].register.style.backgroundColor = PALETTE.correctAnswer;
-            console.log(`Allocated ${randomRegisterAmount} registers in block of size ${bestFitBlock.length}`);
-        }
-        foundMatch = true;
-        console.log("2 caso")
+        console.log("caso 2")
     }
-    return foundMatch;
+
+    for (let i = 0; i < randomRegisterAmount; i++) {
+        bestBlock[i].register.style.backgroundColor = PALETTE.correctAnswer;
+    }
+    console.log(`Allocated ${randomRegisterAmount} registers in block of size ${bestBlock.length}`);
+    return true;
 }
 
 function worstFit(defaultRegisters, randomRegisterAmount) {
-    let blankSpaceCounter = 0;
-    let currentBlankSpaceBlock = [];
-    let blankBlocks = []; // vector of  possible solutions
-    let foundMatch = false;
+    let currentBlock = [];
+    let allBlankBlocks = []; // vector of  possible solutions
+    let exactMatch = null;
+    let worseBlock = null;
 
     for (let index = 0; index < defaultRegisters.length; index++) {
         const item = defaultRegisters[index];
 
         if (item.color === PALETTE.empty) {
-            currentBlankSpaceBlock.push(item);
-            blankSpaceCounter++;
+            currentBlock.push(item);
 
         } else {// adds to validBlocks when it breaks
 
-            if (currentBlankSpaceBlock.length === randomRegisterAmount) {// best case, quit
-                foundMatch = true; break;
+            if (currentBlock.length === randomRegisterAmount) {// best case, quit
+                exactMatch = currentBlock;
+                break;
             }
-            blankBlocks.push(currentBlankSpaceBlock);
-            blankSpaceCounter = 0;
-            currentBlankSpaceBlock = [];
+            allBlankBlocks.push(currentBlock);
+            currentBlock = [];
 
         }
     }
-    if (currentBlankSpaceBlock.length > 0) {
-        blankBlocks.push(currentBlankSpaceBlock);
+
+    //adiciona ultimo elemento, se o 
+    if (!exactMatch && currentBlock.length > 0) {
+        if (currentBlock.length === randomRegisterAmount) {
+            exactMatch = currentBlock;
+        } else {
+            allBlankBlocks.push(currentBlock);
+        }
     }
 
-    if (foundMatch) {
-        let worstFitblock = blankBlocks[blankBlocks.length - 1]; //top vector is the one
-        //
-        worstFitblock.forEach(block => {
-            block.register.style.backgroundColor = PALETTE.correctAnswer;
-        });
-        console.log("1 caso")
+    if (exactMatch) {
+        worseBlock = exactMatch;
+        console.log("Match exato encontrado!");
     }
     else {
 
-        let validBlocks = blankBlocks.filter(block => block.length >= randomRegisterAmount);// o bloco deve ser maior ou igual a qnt dados alocados 
+        let validBlocks = allBlankBlocks.filter(block => block.length >= randomRegisterAmount);// o bloco deve ser maior ou igual a qnt dados alocados 
         if (validBlocks.length === 0) {
             console.log("nao ha lugar valido");
             return false;
         }
         // Find the smallest valid block (Best Fit)
-        let worstFitBlock = validBlocks[0];
+        worseBlock = validBlocks[0];
         validBlocks.forEach(block => {
-            if (block.length >= worstFitBlock.length) { //WORSE FIT strategy
-                worstFitBlock = block;
+            if (block.length >= worseBlock.length) { //WORSE FIT strategy
+                worseBlock = block;
             }
         });
         // Allocate in the best fit block
-        for (let i = 0; i < randomRegisterAmount; i++) {
-            worstFitBlock[i].register.style.backgroundColor = PALETTE.correctAnswer;
-            console.log(`Allocated ${randomRegisterAmount} registers in block of size ${worstFitBlock.length}`);
-        }
-        foundMatch = true;
-        console.log("2 caso")
+        console.log("caso 2")
     }
-    return foundMatch;
+
+    for (let i = 0; i < randomRegisterAmount; i++) {
+        worseBlock[i].register.style.backgroundColor = PALETTE.correctAnswer;
+    }
+    console.log(`Allocated ${randomRegisterAmount} registers in block of size ${worseBlock.length}`);
+    return true;
 }
+
 
 // Main block (runs after DOM is ready)
 document.addEventListener('DOMContentLoaded', () => {
@@ -245,10 +224,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('.register-container');
 
     const randomRegisterAmount = getRandomInt(1, 7);
-    const registerAmount = 100;
+    const registerAmount = 50;
     let defaultRegisters = [];
 
-    // --- Create draggable random registers ---
+    // --- Create  random registers ---
     for (let i = 0; i < randomRegisterAmount; i++) {
         const randomRegister = document.createElement('div');
         randomRegister.className = 'randomRegister';
@@ -338,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('input[name="checked"]').forEach(radio => {
         radio.addEventListener('change', async () => {
             resetRegisters(defaultRegisters);
-            await sleep(0.2); // Wait 0.1 seconds
+            await sleep(0.15); // Wait half of the trasition time  to recollor
             runAlgorithm();
         });
     });
