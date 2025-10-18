@@ -297,6 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (!foundMatch) {
 
+
              const warning = document.getElementById("warning");
             warning.textContent = "No available space! Please delete something.";
             warning.style.display = "block";
