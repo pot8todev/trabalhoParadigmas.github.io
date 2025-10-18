@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>index</title>
+
+  <!-- Default style -->
+  <link rel="stylesheet" href="assets/css/default.css"> 
+
+  <!-- CSS manually given -->
+  <link rel="stylesheet" href="assets/css/style-index.css"> 
+
+  <!-- JS manually given -->
+  <script src="assets/js/script-index.js"></script>
+</head>
+<body><div class = "wrapper">
+    
+
+  <form class="radio-form">
+    <div>
+        <label><input type="radio" name="checked" value="first" checked> First Fit</label><br>
+        <label><input type="radio" name="checked" value="best"> Best Fit</label><br>
+        <label><input type="radio" name="checked" value="worst"> Worst Fit</label><br>
+        <label><input type="radio" name="checked" value="next"> Next Fit</label>
+
+        <input type= "hidden" name= "checked" value= "submit">
+    </div>
+    <div>
+        <button type="submit" value= "refresh">Refresh</button>
+    </div>
+  </form>
+    <div>
+        <div class = "randomRegister-Container"> </div>
+    </div>
+    <main class = "register-container"> </main>
+
+
+</div>
+
+</body>
+        <footer>
+      <p>&copy; <?php echo date("Y"); ?> Meu Site. Todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>

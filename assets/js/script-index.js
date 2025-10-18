@@ -8,29 +8,22 @@ const PALETTE = {
 
 //----- Utility:------
 //random integer generator
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-//stop function
-function sleep(seconds) {
+function getRandomInt(min, max) {  return Math.floor(Math.random() * (max - min + 1)) + min; }
+function sleep(seconds) {//stop function
     return new Promise(resolve => {
         setTimeout(resolve, seconds * 1000);
-
     })
 }
-//-----
-
 function resetRegisters(defaultRegisters) {
     defaultRegisters.forEach(item => {
         item.register.style.backgroundColor = item.color; // back to base color
     });
 }
 
+//---------------------------
 // Allocation algorithms
 function firstFit(defaultRegisters, randomRegisterAmount) {
-    let blankSpaceCounter = 0;
-    let blankSpaceVector = [];
+    let currentBlock = [];
     let foundMatch = false;
 
     for (let index = 0; index < defaultRegisters.length; index++) {
@@ -39,19 +32,17 @@ function firstFit(defaultRegisters, randomRegisterAmount) {
         if (foundMatch) break;
 
         if (item.color === PALETTE.empty) {
-            blankSpaceVector.push(item.register);
-            blankSpaceCounter++;
+            currentBlock.push(item.register);
 
-            if (blankSpaceCounter === randomRegisterAmount) {
-                blankSpaceVector.forEach(blankSpace => {
+            if (currentBlock.length === randomRegisterAmount) {
+                currentBlock.forEach(blankSpace => {
                     blankSpace.style.backgroundColor = PALETTE.correctAnswer;//styles without changing proprierty
                 });
                 foundMatch = true;
                 break;
             }
         } else {
-            blankSpaceCounter = 0;
-            blankSpaceVector = [];
+            currentBlock = [];
         }
     }
 
@@ -60,12 +51,11 @@ function firstFit(defaultRegisters, randomRegisterAmount) {
     }
     return foundMatch;
 }
-
 function nextFit(defaultRegisters, randomRegisterAmount) {
-    let newArray = defaultRegisters;
+    let newArray = defaultRegisters;// to reenterpret the start of the list
     let lastAlocatedIndex = -1;
 
-    // Find the PALETTE.lastAlocated register
+    // Find the (PALETTE.lastAlocated) register
     for (let i = 0; i < defaultRegisters.length; i++) {
         if (defaultRegisters[i].register.style.backgroundColor === PALETTE.lastAlocated) {
             lastAlocatedIndex = i;
@@ -74,7 +64,7 @@ function nextFit(defaultRegisters, randomRegisterAmount) {
     }
 
     if (lastAlocatedIndex === -1) {
-        console.log("Nenhum registro salmon encontrado, usando firstFit normal");
+        console.log("Nenhum registro do ultimo registrador encontrado, usando firstFit normalmente");
         return firstFit(defaultRegisters, randomRegisterAmount);
     }
 
@@ -84,6 +74,7 @@ function nextFit(defaultRegisters, randomRegisterAmount) {
         if (register.register.style.backgroundColor === PALETTE.empty) {
             const firstHalf = defaultRegisters.slice(i);
             const secondHalf = defaultRegisters.slice(0, i);
+
             newArray = firstHalf.concat(secondHalf);
             break;
         }
@@ -91,13 +82,11 @@ function nextFit(defaultRegisters, randomRegisterAmount) {
 
     return firstFit(newArray, randomRegisterAmount);
 }
-
-
 function bestFit(defaultRegisters, randomRegisterAmount) {
-    let currentBlock = [];
-    let allBlankBlocks = []; // vector of  possible solutions
+    let currentBlock = [];// bloco com a sequencia de registradores livres atual
+    let allBlankBlocks = []; // vetor  de blacos
     let exactMatch = null;
-    let bestBlock;
+    let bestBlock;//lista de registradores, do bloco mais apropiado
 
     for (let index = 0; index < defaultRegisters.length; index++) {
         const item = defaultRegisters[index];
@@ -154,7 +143,6 @@ function bestFit(defaultRegisters, randomRegisterAmount) {
     console.log(`Allocated ${randomRegisterAmount} registers in block of size ${bestBlock.length}`);
     return true;
 }
-
 function worstFit(defaultRegisters, randomRegisterAmount) {
     let currentBlock = [];
     let allBlankBlocks = []; // vector of  possible solutions
@@ -224,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('.register-container');
 
     const randomRegisterAmount = getRandomInt(1, 7);
-    const registerAmount = 50;
+    const registerAmount = 40;
     let defaultRegisters = [];
 
     // --- Create  random registers ---
@@ -246,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const register = document.createElement('div');
         register.className = 'register';
 
-        if (Math.random() < 0.1) {//purple odds
+        if (Math.random() < 0.2) {//purple odds
             if (isViolet) {
                 lastAlocated.push(register);
             } else if (isFirstPurple_ever || (isFirstPurple_Row && getRandomInt(1, 10) < 2)) {
@@ -317,8 +305,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('input[name="checked"]').forEach(radio => {
         radio.addEventListener('change', async () => {
             resetRegisters(defaultRegisters);
-            await sleep(0.15); // Wait half of the trasition time  to recollor
-            runAlgorithm();
+            await sleep(0.15); // Wait half of the trasition time  to re-collor
+            runAlgorithm()
         });
     });
 });
