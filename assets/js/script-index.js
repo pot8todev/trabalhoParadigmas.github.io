@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const register = document.createElement('div');
         register.className = 'register';
 
-        if (Math.random() < 0.2) {//purple odds
+        if (Math.random() < 0.2) {// odds of beign occupied
             if (isViolet) {
                 lastAlocated.push(register);
             } else if (isFirstPurple_ever || (isFirstPurple_Row && getRandomInt(1, 10) < 2)) {
@@ -295,10 +295,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
 
         }
-        // if (!foundMatch) {
-        //
-        //     alert("not an available space, please consider deleting something");
-        // }
+        if (!foundMatch) {
+
+             const warning = document.getElementById("warning");
+            warning.textContent = "No available space! Please delete something.";
+            warning.style.display = "block";
+
+            // Optionally hide after a few seconds
+            setTimeout(() => {
+                warning.style.display = "none";
+            }, 3000);
+            defaultRegisters.forEach(item=>{
+                if(item.register.style.backgroundColor == PALETTE.empty){
+                    item.register.style.backgroundColor = "pink";
+                }
+                // await sleep(0.15);
+
+
+            })
+        }
     }
     runAlgorithm();
 

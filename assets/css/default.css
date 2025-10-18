@@ -31,6 +31,12 @@ footer {
     text-align: center;
 }
 
+.warning{
+    color: red;
+    display:
+    none; 
+    margin-top: 10px;
+}
 .wrapper {
     display: flex;
     flex-direction: column;
