@@ -300,11 +300,11 @@ document.addEventListener('DOMContentLoaded', () => {
              const warning = document.getElementById("warning");
             warning.textContent = "No available space! Please delete something.";
             warning.style.display = "block";
-
             // Optionally hide after a few seconds
             setTimeout(() => {
                 warning.style.display = "none";
             }, 3000);
+
             defaultRegisters.forEach(item=>{
                 if(item.register.style.backgroundColor == PALETTE.empty){
                     item.register.style.backgroundColor = "pink";
