@@ -15,7 +15,7 @@ function sleep(seconds) {//stop function
     })
 }
 function resetRegisters(defaultRegisters) {
-    defaultRegisters.forEach(item => {
+defaultRegisters.forEach(item => {
         item.register.style.backgroundColor = item.color; // back to base color
     });
 }
@@ -297,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (!foundMatch) {
 
-
+    
              const warning = document.getElementById("warning");
             warning.textContent = "No available space! Please delete something.";
             warning.style.display = "block";
