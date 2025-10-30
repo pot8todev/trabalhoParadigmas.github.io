@@ -1,27 +1,157 @@
-
 const PALETTE = {
     occupied: 'purple',
     lastAlocated: 'salmon',
     correctAnswer: 'blue',
     empty: 'white',
 };
+// Main part of the code
+document.addEventListener('DOMContentLoaded', () => {
+    const randomRegisterAmount = getRandomInt(1, 7);
 
-//----- Utility:------
+    let defaultRegisters = [];
+    let lastAlocated = [];
+    createRandomRegisters(randomRegisterAmount);
+    createDefaultRegisters(defaultRegisters, lastAlocated);
+
+    // --- Paint colors (salmon for violet) ---
+    defaultRegisters.forEach(item => {
+        lastAlocated.forEach(lastItemsAlocated => {
+            if (item.register === lastItemsAlocated) {
+                item.color = PALETTE.lastAlocated;
+            }
+        });
+        item.register.style.backgroundColor = item.color;
+    });
+
+
+    // --- Define runAlgorithm inside same scope ---
+    function runAlgorithm() {
+        const selected = document.querySelector('input[name="checked"]:checked').value;
+        console.log("Selected:", selected);
+        foundMatch = false;
+
+        switch (selected) {
+            case 'first':
+                resetRegisters(defaultRegisters);
+                foundMatch = firstFit(defaultRegisters, randomRegisterAmount);
+                break;
+            case 'best':
+                resetRegisters(defaultRegisters);
+                foundMatch = bestFit(defaultRegisters, randomRegisterAmount);
+                break;
+
+            case 'worst':
+                resetRegisters(defaultRegisters);
+                foundMatch = worstFit(defaultRegisters, randomRegisterAmount);
+                break;
+            case 'next':
+                resetRegisters(defaultRegisters);
+                foundMatch = nextFit(defaultRegisters, randomRegisterAmount);
+                break;
+
+        }
+        if (!foundMatch) {
+
+
+            const warning = document.getElementById("warning");
+            warning.textContent = "No available space! Please delete something.";
+            warning.style.display = "block";
+            // Optionally hide after a few seconds
+            setTimeout(() => {
+                warning.style.display = "none";
+            }, 3000);
+
+            defaultRegisters.forEach(item => {
+                if (item.register.style.backgroundColor == PALETTE.empty) {
+                    item.register.style.backgroundColor = "pink";
+                }
+                // await sleep(0.15);
+
+
+            })
+        }
+    }
+    runAlgorithm();
+
+    document.querySelectorAll('input[name="checked"]').forEach(radio => {
+        radio.addEventListener('change', async () => {
+            resetRegisters(defaultRegisters);
+            await sleep(0.15); // Wait half of the trasition time  to re-collor
+            runAlgorithm()
+        });
+    });
+});
+
+//----- Utility ------
+
 //random integer generator
-function getRandomInt(min, max) {  return Math.floor(Math.random() * (max - min + 1)) + min; }
-function sleep(seconds) {//stop function
+function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function sleep(seconds) {
     return new Promise(resolve => {
         setTimeout(resolve, seconds * 1000);
     })
 }
-function resetRegisters(defaultRegisters) {
-defaultRegisters.forEach(item => {
+function resetRegisters(defaultRegisters) { // reset their original color
+    defaultRegisters.forEach(item => {
         item.register.style.backgroundColor = item.color; // back to base color
     });
 }
+//----- Starting Up Registers ------
+function createRandomRegisters(randomRegisterAmount) {
+    const randomRegisterContainer = document.querySelector('.randomRegister-Container');
 
-//---------------------------
-// Allocation algorithms
+    // --- Create  random registers ---
+    for (let i = 0; i < randomRegisterAmount; i++) {
+        const randomRegister = document.createElement('div');
+        randomRegister.className = 'randomRegister';
+        randomRegister.style.backgroundColor = PALETTE.occupied;
+        randomRegisterContainer.appendChild(randomRegister);
+    }
+}
+function createDefaultRegisters(defaultRegisters, lastAlocated) {
+
+    const container = document.querySelector('.register-container');
+    const registerAmount = 40;
+
+    // --- Create static registers ---
+    // TOFIX  change name of variables
+    let isLastAlocated = false;
+    let isFirst = true;
+    let isFirst_ever = true;
+
+    for (let i = 0; i < registerAmount; i++) {
+        const register = document.createElement('div');
+        let isRegisterOccupied = Math.random() < 0.2;
+        register.className = 'register';
+
+        if (isRegisterOccupied) {// odds of beign occupied
+            if (isLastAlocated) {
+                lastAlocated.push(register);
+            } else if (isFirst_ever || (isFirst && getRandomInt(1, 10) < 2)) {
+                lastAlocated.length = 0;//to empty the vector
+                lastAlocated.push(register);
+
+                isLastAlocated = true;
+                isFirst = false;
+            } else {
+                isFirst = false;
+                isLastAlocated = false;
+            }
+            defaultRegisters.push({ register, color: PALETTE.occupied });
+            isFirst_ever = false;
+        } else {
+            isFirst = true;
+            isLastAlocated = false;
+            defaultRegisters.push({ register, color: PALETTE.empty });
+        }
+
+        container.appendChild(register);
+    }
+
+}
+
+//----------- Allocation algorithms ----------------
+
 function firstFit(defaultRegisters, randomRegisterAmount) {
     let currentBlock = [];
     let foundMatch = false;
@@ -205,124 +335,3 @@ function worstFit(defaultRegisters, randomRegisterAmount) {
     return true;
 }
 
-
-// Main block (runs after DOM is ready)
-document.addEventListener('DOMContentLoaded', () => {
-    const randomRegisterContainer = document.querySelector('.randomRegister-Container');
-    const container = document.querySelector('.register-container');
-
-    const randomRegisterAmount = getRandomInt(1, 7);
-    const registerAmount = 40;
-    let defaultRegisters = [];
-
-    // --- Create  random registers ---
-    for (let i = 0; i < randomRegisterAmount; i++) {
-        const randomRegister = document.createElement('div');
-        randomRegister.className = 'randomRegister';
-        randomRegister.style.backgroundColor = PALETTE.occupied;
-        randomRegisterContainer.appendChild(randomRegister);
-    }
-
-    // --- Create static registers ---
-    // TOFIX  change name of variables
-    let isViolet = false;
-    let isFirstPurple_Row = true;
-    let isFirstPurple_ever = true;
-    let lastAlocated = [];
-
-    for (let i = 0; i < registerAmount; i++) {
-        const register = document.createElement('div');
-        register.className = 'register';
-
-        if (Math.random() < 0.2) {// odds of beign occupied
-            if (isViolet) {
-                lastAlocated.push(register);
-            } else if (isFirstPurple_ever || (isFirstPurple_Row && getRandomInt(1, 10) < 2)) {
-                lastAlocated = [];
-                lastAlocated.push(register);
-
-                isViolet = true;
-                isFirstPurple_Row = false;
-            } else {
-                isFirstPurple_Row = false;
-                isViolet = false;
-            }
-            defaultRegisters.push({ register, color: PALETTE.occupied });
-            isFirstPurple_ever = false;
-        } else {
-            isFirstPurple_Row = true;
-            isViolet = false;
-            defaultRegisters.push({ register, color: PALETTE.empty });
-        }
-
-        container.appendChild(register);
-    }
-
-    // --- Paint colors (salmon for violet) ---
-    defaultRegisters.forEach(item => {
-        lastAlocated.forEach(lastItemsAlocated => {
-            if (item.register === lastItemsAlocated) {
-                item.color = PALETTE.lastAlocated;
-            }
-        });
-        item.register.style.backgroundColor = item.color;
-    });
-
-
-    // --- Define runAlgorithm inside same scope ---
-    function runAlgorithm() {
-        const selected = document.querySelector('input[name="checked"]:checked').value;
-        console.log("Selected:", selected);
-        foundMatch = false;
-
-        switch (selected) {
-            case 'first':
-                resetRegisters(defaultRegisters);
-                foundMatch = firstFit(defaultRegisters, randomRegisterAmount);
-                break;
-            case 'best':
-                resetRegisters(defaultRegisters);
-                foundMatch = bestFit(defaultRegisters, randomRegisterAmount);
-                break;
-
-            case 'worst':
-                resetRegisters(defaultRegisters);
-                foundMatch = worstFit(defaultRegisters, randomRegisterAmount);
-                break;
-            case 'next':
-                resetRegisters(defaultRegisters);
-                foundMatch = nextFit(defaultRegisters, randomRegisterAmount);
-                break;
-
-        }
-        if (!foundMatch) {
-
-    
-             const warning = document.getElementById("warning");
-            warning.textContent = "No available space! Please delete something.";
-            warning.style.display = "block";
-            // Optionally hide after a few seconds
-            setTimeout(() => {
-                warning.style.display = "none";
-            }, 3000);
-
-            defaultRegisters.forEach(item=>{
-                if(item.register.style.backgroundColor == PALETTE.empty){
-                    item.register.style.backgroundColor = "pink";
-                }
-                // await sleep(0.15);
-
-
-            })
-        }
-    }
-    runAlgorithm();
-
-    document.querySelectorAll('input[name="checked"]').forEach(radio => {
-        radio.addEventListener('change', async () => {
-            resetRegisters(defaultRegisters);
-            await sleep(0.15); // Wait half of the trasition time  to re-collor
-            runAlgorithm()
-        });
-    });
-});
