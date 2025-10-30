@@ -14,34 +14,32 @@
 
   <!-- JS manually given -->
   <script src="assets/js/script-index.js"></script>
+  <script src="assets/js/test.js"></script>
 </head>
-<body> 
+    <body> 
         <div class = "wrapper">
-    
+            <form class= "container" >
+                <section  class="radio-form">
+                    <label><input type="radio" name="checked" value="first" checked> First Fit</label><br>
+                    <label><input type="radio" name="checked" value="best"> Best Fit</label><br>
+                    <label><input type="radio" name="checked" value="worst"> Worst Fit</label><br>
+                    <label><input type="radio" name="checked" value="next"> Next Fit</label>
+                </section>
 
-  <form class="radio-form">
-    <section>
-        <label><input type="radio" name="checked" value="first" checked> First Fit</label><br>
-        <label><input type="radio" name="checked" value="best"> Best Fit</label><br>
-        <label><input type="radio" name="checked" value="worst"> Worst Fit</label><br>
-        <label><input type="radio" name="checked" value="next"> Next Fit</label>
-
-        <input type= "hidden" name= "checked" value= "submit">
-    </section>
-    <section>
-        <button type="submit" value= "refresh">Refresh</button>
-    </section>
-  </form>
-    <div>
-        <div class = "randomRegister-Container"> </div>
-    </div>
-    <main class = "register-container"> </main><!-- main part of the code-->
+                
+                <input type= "text" placeholder ="new <>/del <>/ exibe" class="submit">
+                <input type= "submit" value= "submit" class="submit">
+            </form>
+            <!-- <button type="submit" value= "refresh">Refresh</button> -->
+            <div class= "container">
+                <div class = "randomRegister-Container"> </div>
+            <main class = "register-container"> </main><!-- main part of the code-->
+            </div>
 
 
-<div id="warning" class="warning"></div>
-</div>
-
-</body>
+            <div id="warning" class="warning"></div>
+        </div>
+    </body>
         <footer>
       <p>@mylittle site</p>
     </footer>

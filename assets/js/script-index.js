@@ -1,12 +1,14 @@
 const PALETTE = {
-    occupied: 'purple',
-    lastAlocated: 'salmon',
-    correctAnswer: 'blue',
     empty: 'white',
+    correctAnswer: 'blue',
+    lastAlocated: 'salmon',
+    recentlyOccupied: '#6C3BAA',
+    occupied: 'purple',
 };
-let defaultRegisters = [];
+let defaultRegisters = [];// {register, color, name}
 let lastAlocated = [];
 let randomRegisterAmount = 0;
+
 document.addEventListener("submit", (event) => {
     event.preventDefault();
     const input = document.querySelector(".submit");
@@ -22,26 +24,25 @@ document.addEventListener("submit", (event) => {
     randomRegisterAmount = getRandomInt(1, 7);
     createRandomRegisters(randomRegisterAmount);
 
-    // --- Paint colors (salmon for violet) ---
     defaultRegisters.forEach(item => {
         if (item.register.style.backgroundColor === PALETTE.correctAnswer) {
             item.color = PALETTE.lastAlocated;
         }
         if (item.register.style.backgroundColor === PALETTE.lastAlocated) {
-            item.color = PALETTE.occupied;
+            item.color = PALETTE.recentlyOccupied;
         }
         item.register.style.backgroundColor = item.color;
     });
 
     // Run your algorithm after generating new registers
-    runAlgorithm();
+    allocationStrategy();
 }
 )
 // Main part of the code
 document.addEventListener('DOMContentLoaded', () => {
     randomRegisterAmount = getRandomInt(1, 7);
 
-    let lastAlocated = [];
+    lastAlocated = [];
     createRandomRegisters(randomRegisterAmount);
     createDefaultRegisters(defaultRegisters, lastAlocated);
 
@@ -57,13 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // --- Define runAlgorithm inside same scope ---
-    runAlgorithm();
+    allocationStrategy();
 
     document.querySelectorAll('input[name="checked"]').forEach(radio => {
         radio.addEventListener('change', async () => {
             resetRegisters(defaultRegisters);
             await sleep(0.15); // Wait half of the trasition time  to re-collor
-            runAlgorithm()
+            allocationStrategy()
         });
     });
 });
@@ -139,7 +140,7 @@ function createDefaultRegisters(defaultRegisters, lastAlocated) {
 //----------- Allocation algorithms ----------------
 
 // ----- Global function -----
-function runAlgorithm() {
+function allocationStrategy() {
     const selected = document.querySelector('input[name="checked"]:checked').value;
     console.log("Selected:", selected);
     let foundMatch = false;
