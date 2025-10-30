@@ -4,11 +4,43 @@ const PALETTE = {
     correctAnswer: 'blue',
     empty: 'white',
 };
+let defaultRegisters = [];
+let lastAlocated = [];
+let randomRegisterAmount = 0;
+document.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const input = document.querySelector(".submit");
+    var text = input.value;
+    console.log(text);
+    input.value = " ";// resets the textbox
+
+
+    // --- Destroy previous random registers ---
+    const randomContainer = document.querySelector(".randomRegister-Container");
+    randomContainer.innerHTML = ""; // remove all children
+
+    randomRegisterAmount = getRandomInt(1, 7);
+    createRandomRegisters(randomRegisterAmount);
+
+    // --- Paint colors (salmon for violet) ---
+    defaultRegisters.forEach(item => {
+        if (item.register.style.backgroundColor === PALETTE.correctAnswer) {
+            item.color = PALETTE.lastAlocated;
+        }
+        if (item.register.style.backgroundColor === PALETTE.lastAlocated) {
+            item.color = PALETTE.occupied;
+        }
+        item.register.style.backgroundColor = item.color;
+    });
+
+    // Run your algorithm after generating new registers
+    runAlgorithm();
+}
+)
 // Main part of the code
 document.addEventListener('DOMContentLoaded', () => {
-    const randomRegisterAmount = getRandomInt(1, 7);
+    randomRegisterAmount = getRandomInt(1, 7);
 
-    let defaultRegisters = [];
     let lastAlocated = [];
     createRandomRegisters(randomRegisterAmount);
     createDefaultRegisters(defaultRegisters, lastAlocated);
@@ -25,52 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // --- Define runAlgorithm inside same scope ---
-    function runAlgorithm() {
-        const selected = document.querySelector('input[name="checked"]:checked').value;
-        console.log("Selected:", selected);
-        foundMatch = false;
-
-        switch (selected) {
-            case 'first':
-                resetRegisters(defaultRegisters);
-                foundMatch = firstFit(defaultRegisters, randomRegisterAmount);
-                break;
-            case 'best':
-                resetRegisters(defaultRegisters);
-                foundMatch = bestFit(defaultRegisters, randomRegisterAmount);
-                break;
-
-            case 'worst':
-                resetRegisters(defaultRegisters);
-                foundMatch = worstFit(defaultRegisters, randomRegisterAmount);
-                break;
-            case 'next':
-                resetRegisters(defaultRegisters);
-                foundMatch = nextFit(defaultRegisters, randomRegisterAmount);
-                break;
-
-        }
-        if (!foundMatch) {
-
-
-            const warning = document.getElementById("warning");
-            warning.textContent = "No available space! Please delete something.";
-            warning.style.display = "block";
-            // Optionally hide after a few seconds
-            setTimeout(() => {
-                warning.style.display = "none";
-            }, 3000);
-
-            defaultRegisters.forEach(item => {
-                if (item.register.style.backgroundColor == PALETTE.empty) {
-                    item.register.style.backgroundColor = "pink";
-                }
-                // await sleep(0.15);
-
-
-            })
-        }
-    }
     runAlgorithm();
 
     document.querySelectorAll('input[name="checked"]').forEach(radio => {
@@ -152,6 +138,44 @@ function createDefaultRegisters(defaultRegisters, lastAlocated) {
 
 //----------- Allocation algorithms ----------------
 
+// ----- Global function -----
+function runAlgorithm() {
+    const selected = document.querySelector('input[name="checked"]:checked').value;
+    console.log("Selected:", selected);
+    let foundMatch = false;
+
+    switch (selected) {
+        case 'first':
+            resetRegisters(defaultRegisters);
+            foundMatch = firstFit(defaultRegisters, randomRegisterAmount);
+            break;
+        case 'best':
+            resetRegisters(defaultRegisters);
+            foundMatch = bestFit(defaultRegisters, randomRegisterAmount);
+            break;
+        case 'worst':
+            resetRegisters(defaultRegisters);
+            foundMatch = worstFit(defaultRegisters, randomRegisterAmount);
+            break;
+        case 'next':
+            resetRegisters(defaultRegisters);
+            foundMatch = nextFit(defaultRegisters, randomRegisterAmount);
+            break;
+    }
+
+    if (!foundMatch) {
+        const warning = document.getElementById("warning");
+        warning.textContent = "No available space! Please delete something.";
+        warning.style.display = "block";
+        setTimeout(() => warning.style.display = "none", 3000);
+
+        defaultRegisters.forEach(item => {
+            if (item.register.style.backgroundColor === PALETTE.empty) {
+                item.register.style.backgroundColor = "pink";
+            }
+        });
+    }
+}
 function firstFit(defaultRegisters, randomRegisterAmount) {
     let currentBlock = [];
     let foundMatch = false;
