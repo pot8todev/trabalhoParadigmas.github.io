@@ -9,11 +9,14 @@ let defaultRegisters = [];// {register, color, name}
 let lastAlocated = [];
 let randomRegisterAmount = 0;
 
+// recognize the command
 document.addEventListener("submit", (event) => {
     event.preventDefault();
     const input = document.querySelector(".submit");
-    var text = input.value;
-    console.log(text);
+    const oldButton = document.getElementById("mainButton");
+    const oldButtonClone = oldButton.cloneNode(true); //
+    var texto = input.value.trim(); //user input text
+    // console.log(texto);
     input.value = " ";// resets the textbox
 
 
@@ -21,8 +24,7 @@ document.addEventListener("submit", (event) => {
     const randomContainer = document.querySelector(".randomRegister-Container");
     randomContainer.innerHTML = ""; // remove all children
 
-    randomRegisterAmount = getRandomInt(1, 7);
-    createRandomRegisters(randomRegisterAmount);
+    // createRandomRegisters(randomRegisterAmount);
 
     defaultRegisters.forEach(item => {
         if (item.register.style.backgroundColor === PALETTE.correctAnswer) {
@@ -36,8 +38,40 @@ document.addEventListener("submit", (event) => {
 
     // Run your algorithm after generating new registers
     allocationStrategy();
-}
-)
+
+    // --- Extract command ---
+    const commandParts = texto.trim().split(" ");
+    // console.log(commandParts.length);
+    const command = commandParts[0]
+    if (command === "new") {
+        const name = commandParts[1];
+        const quantityOfRegisters = commandParts[2];
+        console.log("Nome:", name);
+        console.log("quantidade:", quantityOfRegisters);
+        createRandomRegisters(quantityOfRegisters);
+
+    }
+    else if (command === "del" || command === "delete") {
+
+    }
+    // document.querySelector(selectors)
+    // --- substitui o botão ---
+    const newButton = document.createElement("button");
+    newButton.id = "confirmButton";
+    newButton.textContent = "Confirm";
+    newButton.type = "button"; // importante! evita submeter de novo o form
+
+    // substitui no DOM
+    oldButton.replaceWith(newButton);
+
+    // adiciona funcionalidade ao novo botão
+    newButton.addEventListener("click", () => {
+        console.log("Confirmed!");
+        newButton.replaceWith(oldButtonClone);
+
+    }
+    )
+})
 // Main part of the code
 document.addEventListener('DOMContentLoaded', () => {
     randomRegisterAmount = getRandomInt(1, 7);
@@ -142,7 +176,7 @@ function createDefaultRegisters(defaultRegisters, lastAlocated) {
 // ----- Global function -----
 function allocationStrategy() {
     const selected = document.querySelector('input[name="checked"]:checked').value;
-    console.log("Selected:", selected);
+    // console.log("Selected:", selected);
     let foundMatch = false;
 
     switch (selected) {
@@ -289,7 +323,6 @@ function bestFit(defaultRegisters, randomRegisterAmount) {
             }
         });
         // Allocate in the best fit block
-        console.log("caso 2")
     }
 
     for (let i = 0; i < randomRegisterAmount; i++) {
@@ -350,7 +383,6 @@ function worstFit(defaultRegisters, randomRegisterAmount) {
             }
         });
         // Allocate in the best fit block
-        console.log("caso 2")
     }
 
     for (let i = 0; i < randomRegisterAmount; i++) {

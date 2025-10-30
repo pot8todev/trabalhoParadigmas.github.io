@@ -44,8 +44,9 @@ footer {
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
     /* horizontal alignment of boxes */
-    gap: 2rem;
+    gap: 1rem;
     padding: 20px;
     justify-content: flex-start;
     border: 2px solid black;

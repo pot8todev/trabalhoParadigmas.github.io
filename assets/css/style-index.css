@@ -13,6 +13,13 @@
     width: 20vh;
 }
 
+.example {
+    background-color: rgb(18, 55, 34, 0.4);
+    gap: 0;
+    width: 20%;
+
+}
+
 .randomRegister-Container,
 .register-container {
     display: flex;

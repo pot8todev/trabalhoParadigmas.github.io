@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>index</title>
+        <title>index</title>
 
-  <!-- Default style -->
-  <link rel="stylesheet" href="assets/css/default.css"> 
+        <!-- Default style -->
+        <link rel="stylesheet" href="assets/css/default.css"> 
 
-  <!-- CSS manually given -->
-  <link rel="stylesheet" href="assets/css/style-index.css"> 
+        <!-- CSS manually given -->
+        <link rel="stylesheet" href="assets/css/style-index.css"> 
 
-  <!-- JS manually given -->
-  <script src="assets/js/script-index.js"></script>
-  <script src="assets/js/test.js"></script>
-</head>
+        <!-- JS manually given -->
+        <script src="assets/js/script-index.js"></script>
+        <script src="assets/js/test.js"></script>
+    </head>
     <body> 
         <div class = "wrapper">
             <form class= "container" >
@@ -26,21 +26,32 @@
                     <label><input type="radio" name="checked" value="next"> Next Fit</label>
                 </section>
 
-                
+
                 <input type= "text" placeholder ="new <>/del <>/ exibe" class="submit">
-                <input type= "submit" value= "submit" class="submit">
+                <div class = "submit">
+                    <input type= "submit" value= "submit" class="submit" id="mainButton">
+                </div>
+
+                <div class = "example container">
+                    <p>new a 3</p>
+                    <p>new b 2</p>
+                    <p>new c 4</p>
+                    <p>d = b  </p>
+                    <p>del d  </p>
+                    <p>new e 1</p>
+                </div>
             </form>
             <!-- <button type="submit" value= "refresh">Refresh</button> -->
             <div class= "container">
                 <div class = "randomRegister-Container"> </div>
-            <main class = "register-container"> </main><!-- main part of the code-->
+                <main class = "register-container"> </main><!-- main part of the code-->
             </div>
 
 
             <div id="warning" class="warning"></div>
         </div>
     </body>
-        <footer>
-      <p>@mylittle site</p>
+    <footer>
+        <p>@mylittle site</p>
     </footer>
 </html>
