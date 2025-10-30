@@ -8,18 +8,19 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background-color: #f2f2f2;
+    background-color: lightgray;
 }
 
 footer {
     background-color: #333;
-    color: #fff;
+    color: #fffdfa;
     padding: 15px 20px;
 }
 
 
 main {
-    flex: 1;
+    height: 56vh;
+    width: 50vh;
 }
 
 /* ===== Header and Footer ===== */
@@ -33,40 +34,33 @@ footer {
 
 .wrapper {
     display: flex;
-    flex-direction: column;
-    /* empilha header, main e footer */
-    min-height: 87vh;
-    /* garante altura mínima da tela */
+    /* flex-direction: column; */
+
 }
 
-.content {
-    flex: 1;
-    /* faz o main ocupar o espaço restante */
-}
 
 /* ===== Box container ===== */
-.box-container {
+.container {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     /* horizontal alignment of boxes */
-    gap: 20px;
-    /* space between boxes */
-    flex-wrap: wrap;
-    /* wrap to new line if needed */
+    gap: 2rem;
     padding: 20px;
     justify-content: flex-start;
-    /* align boxes to left */
+    border: 2px solid black;
+    border-radius: 15px;
+    background-color: #fffdfa;
 }
 
 /* ===== Box ===== */
 .box {
-    background-color: #fff;
+    background-color: #fffdfa;
     border: 1px solid #ccc;
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    flex: 1 1 200px;
-    /* grow/shrink, minimum width 200px */
-    transition: all 0.3s ease;
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
     cursor: pointer;
 
 }
@@ -75,4 +69,5 @@ footer {
 .box:hover {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     transform: translateY(-2px);
+    cursor: pointer;
 }

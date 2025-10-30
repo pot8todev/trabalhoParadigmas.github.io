@@ -1,8 +1,23 @@
+.radio-form {
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+}
+
+.input {
+    height: 20rem;
+    border-radius: 15px
+}
+
+.submit {
+    width: 20vh;
+}
+
 .randomRegister-Container,
 .register-container {
     display: flex;
     flex-direction: row;
-    gap: 1px;
+    gap: 0.2rem;
 
     /*align in x*/
     justify-content: center;
@@ -15,13 +30,13 @@
     margin: 2%;
     /* wrap se não couber horizontalmente */
     flex-wrap: nowrap;
-    height: 87vh;
+    /* height: 87vh; */
 }
 
 .randomRegister-Container {
     opacity: 40%;
     background-color: gray;
-    height: 1px;
+    height: 1rem;
     padding: 15px;
 
     overflow-x: hidden;
@@ -29,13 +44,13 @@
 
     /* Center horizontally */
     margin: 0 auto;
-    width: fit-content;
-    /* or set a fixed width, e.g. 300px */
 }
 
 .register-container {
-    align-items: left;
+    align-items: center;
     justify-content: flex-start;
+    width: fit-content;
+    margin: 0 auto;
 }
 
 
@@ -49,8 +64,8 @@
 
 
     /* size */
-    height: 10px;
-    width: 2%;
+    height: 1rem;
+    width: 4rem;
     /* altura fixa */
     display: flex;
     /* para centralizar conteúdo */
@@ -67,9 +82,11 @@
     background-color: purple;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     transform: translateY(-2px);
+    cursor: pointer;
 }
-.warning{
+
+.warning {
     color: red;
-    display: none; 
+    display: none;
     margin-top: 10px;
 }
