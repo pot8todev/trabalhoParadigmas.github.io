@@ -24,34 +24,48 @@ document.addEventListener("submit", (event) => {
     const randomContainer = document.querySelector(".randomRegister-Container");
     randomContainer.innerHTML = ""; // remove all children
 
-    // createRandomRegisters(randomRegisterAmount);
-
-    defaultRegisters.forEach(item => {
-        if (item.register.style.backgroundColor === PALETTE.correctAnswer) {
-            item.color = PALETTE.lastAlocated;
-        }
-        if (item.register.style.backgroundColor === PALETTE.lastAlocated) {
-            item.color = PALETTE.recentlyOccupied;
-        }
-        item.register.style.backgroundColor = item.color;
-    });
 
     // Run your algorithm after generating new registers
-    allocationStrategy();
 
     // --- Extract command ---
     const commandParts = texto.trim().split(" ");
+    const numberCommandElements = commandParts.length;
     // console.log(commandParts.length);
     const command = commandParts[0]
     if (command === "new") {
-        const name = commandParts[1];
-        const quantityOfRegisters = commandParts[2];
-        console.log("Nome:", name);
-        console.log("quantidade:", quantityOfRegisters);
-        createRandomRegisters(quantityOfRegisters);
+        const requiredNumberCommands = 3;// <new><name><amount>
 
+        if (numberCommandElements === requiredNumberCommands) {
+
+            const name = commandParts[1];
+            const quantityOfRegisters = parseInt(commandParts[2]);
+            console.log("Nome:", name);
+            console.log("quantidade:", quantityOfRegisters);
+            createRandomRegisters(quantityOfRegisters);
+
+            // Update global variable if needed
+            randomRegisterAmount = quantityOfRegisters;
+
+            // Now run the allocation algorithm
+            allocationStrategy(quantityOfRegisters);
+
+            attachRadioListeners();
+        }
+        else {
+            console.log(numberCommandElements < requiredNumberCommands ? "too few" : "too many", "commands");
+        }
     }
     else if (command === "del" || command === "delete") {
+        const requiredNumberCommands = 2;//<del><name>
+
+        if (numberCommandElements === requiredNumberCommands) {
+
+        }
+        else {
+
+            console.log(numberCommandElements < requiredNumberCommands ? "too few" : "too many", "commands");
+        }
+
 
     }
     // document.querySelector(selectors)
@@ -64,43 +78,48 @@ document.addEventListener("submit", (event) => {
     // substitui no DOM
     oldButton.replaceWith(newButton);
 
+    input.style.display = "none";
     // adiciona funcionalidade ao novo botão
     newButton.addEventListener("click", () => {
         console.log("Confirmed!");
-        newButton.replaceWith(oldButtonClone);
+        defaultRegisters.forEach(item => {
+            if (item.register.style.backgroundColor === PALETTE.correctAnswer) {
+                item.color = PALETTE.lastAlocated;
+            }
+            if (item.register.style.backgroundColor === PALETTE.lastAlocated) {
+                item.color = PALETTE.recentlyOccupied;
+            }
+            item.register.style.backgroundColor = item.color;
+        });
 
-    }
-    )
+
+        randomContainer.innerHTML = ""; // remove all children
+        input.style.display = "block";
+        newButton.replaceWith(oldButtonClone);
+        randomRegisterAmount = 0;
+    });
 })
 // Main part of the code
 document.addEventListener('DOMContentLoaded', () => {
-    randomRegisterAmount = getRandomInt(1, 7);
+    // randomRegisterAmount = getRandomInt(1, 7);
 
     lastAlocated = [];
-    createRandomRegisters(randomRegisterAmount);
+    // createRandomRegisters(randomRegisterAmount);
     createDefaultRegisters(defaultRegisters, lastAlocated);
 
-    // --- Paint colors (salmon for violet) ---
+    //if register exist in dR and lA
     defaultRegisters.forEach(item => {
-        lastAlocated.forEach(lastItemsAlocated => {
-            if (item.register === lastItemsAlocated) {
-                item.color = PALETTE.lastAlocated;
-            }
-        });
+        if (lastAlocated.some(last => last === item.register)) {
+            item.color = PALETTE.lastAlocated;
+        }
         item.register.style.backgroundColor = item.color;
     });
 
 
     // --- Define runAlgorithm inside same scope ---
-    allocationStrategy();
+    allocationStrategy(randomRegisterAmount);
 
-    document.querySelectorAll('input[name="checked"]').forEach(radio => {
-        radio.addEventListener('change', async () => {
-            resetRegisters(defaultRegisters);
-            await sleep(0.15); // Wait half of the trasition time  to re-collor
-            allocationStrategy()
-        });
-    });
+    attachRadioListeners();
 });
 
 //----- Utility ------
@@ -174,7 +193,7 @@ function createDefaultRegisters(defaultRegisters, lastAlocated) {
 //----------- Allocation algorithms ----------------
 
 // ----- Global function -----
-function allocationStrategy() {
+function allocationStrategy(randomRegisterAmount) {
     const selected = document.querySelector('input[name="checked"]:checked').value;
     // console.log("Selected:", selected);
     let foundMatch = false;
@@ -198,7 +217,8 @@ function allocationStrategy() {
             break;
     }
 
-    if (!foundMatch) {
+
+    if (!foundMatch && randomRegisterAmount != 0) {
         const warning = document.getElementById("warning");
         warning.textContent = "No available space! Please delete something.";
         warning.style.display = "block";
@@ -392,3 +412,12 @@ function worstFit(defaultRegisters, randomRegisterAmount) {
     return true;
 }
 
+function attachRadioListeners() {
+    document.querySelectorAll('input[name="checked"]').forEach(radio => {
+        radio.addEventListener('change', async () => {
+            resetRegisters(defaultRegisters);
+            await sleep(0.15);
+            allocationStrategy(randomRegisterAmount);
+        });
+    });
+}
