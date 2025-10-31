@@ -12,6 +12,9 @@ let randomRegisterAmount = 0;
 // recognize the command
 document.addEventListener("submit", (event) => {
     event.preventDefault();
+    const history = document.querySelector((".history"));
+    const historyElement = document.createElement("div");
+
     const input = document.querySelector(".submit");
     const oldButton = document.getElementById("mainButton");
     const oldButtonClone = oldButton.cloneNode(true); //
@@ -34,25 +37,35 @@ document.addEventListener("submit", (event) => {
     const command = commandParts[0]
     if (command === "new") {
         const requiredNumberCommands = 3;// <new><name><amount>
-
         if (numberCommandElements === requiredNumberCommands) {
-
             const name = commandParts[1];
             const quantityOfRegisters = parseInt(commandParts[2]);
-            console.log("Nome:", name);
-            console.log("quantidade:", quantityOfRegisters);
-            createRandomRegisters(quantityOfRegisters);
+            const alreadyExists = Array.from(history.children).some(el => el.textContent.includes(name))
 
-            // Update global variable if needed
-            randomRegisterAmount = quantityOfRegisters;
+            if (!alreadyExists) {
 
-            // Now run the allocation algorithm
-            allocationStrategy(quantityOfRegisters);
+                console.log("Nome:", name);
+                console.log("quantidade:", quantityOfRegisters);
+                createRandomRegisters(quantityOfRegisters);
 
-            attachRadioListeners();
+                // Update global variable if needed
+                randomRegisterAmount = quantityOfRegisters;
+
+                // Now run the allocation algorithm
+                allocationStrategy(quantityOfRegisters);
+                attachRadioListeners();
+                historyElement.className = "box";
+                historyElement.textContent = name + " : " + quantityOfRegisters;
+                historyElement.value = name;
+
+                history.appendChild(historyElement);
+            }
+            else {
+                warning("sorry, this name is already in use, chose another");
+            }
         }
         else {
-            console.log(numberCommandElements < requiredNumberCommands ? "too few" : "too many", "commands");
+            warning(numberCommandElements < requiredNumberCommands ? "too few" : "too many", "commands");
         }
     }
     else if (command === "del" || command === "delete") {
@@ -63,17 +76,17 @@ document.addEventListener("submit", (event) => {
         }
         else {
 
-            console.log(numberCommandElements < requiredNumberCommands ? "too few" : "too many", "commands");
+            warning(numberCommandElements < requiredNumberCommands ? "too few" : "too many", "commands");
         }
 
 
     }
-    // document.querySelector(selectors)
     // --- substitui o botão ---
     const newButton = document.createElement("button");
     newButton.id = "confirmButton";
     newButton.textContent = "Confirm";
     newButton.type = "button"; // importante! evita submeter de novo o form
+
 
     // substitui no DOM
     oldButton.replaceWith(newButton);
@@ -219,16 +232,7 @@ function allocationStrategy(randomRegisterAmount) {
 
 
     if (!foundMatch && randomRegisterAmount != 0) {
-        const warning = document.getElementById("warning");
-        warning.textContent = "No available space! Please delete something.";
-        warning.style.display = "block";
-        setTimeout(() => warning.style.display = "none", 3000);
-
-        defaultRegisters.forEach(item => {
-            if (item.register.style.backgroundColor === PALETTE.empty) {
-                item.register.style.backgroundColor = "pink";
-            }
-        });
+        warning("No available space! Please delete something.");
     }
 }
 function firstFit(defaultRegisters, randomRegisterAmount) {
@@ -419,5 +423,17 @@ function attachRadioListeners() {
             await sleep(0.15);
             allocationStrategy(randomRegisterAmount);
         });
+    });
+}
+function warning(warningText) {
+    const warning = document.getElementById("warning");
+    warning.textContent = warningText;
+    warning.style.display = "block";
+    setTimeout(() => warning.style.display = "none", 3000);
+
+    defaultRegisters.forEach(item => {
+        if (item.register.style.backgroundColor === PALETTE.empty) {
+            item.register.style.backgroundColor = "pink";
+        }
     });
 }

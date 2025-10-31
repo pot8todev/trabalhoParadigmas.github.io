@@ -42,7 +42,7 @@
 
 .randomRegister-Container {
     opacity: 40%;
-    background-color: gray;
+    border: 2px dotted black;
     height: 1rem;
     padding: 15px;
 
@@ -91,6 +91,18 @@
     transform: translateY(-2px);
     cursor: pointer;
 }
+
+.historyContainer {
+    width: 50%;
+    height: 100%;
+    border: 1px solid black;
+    border-radius: 15px;
+    box-sizing: border-box;
+    display: inline;
+
+}
+
+/* .history {} */
 
 .warning {
     color: red;
