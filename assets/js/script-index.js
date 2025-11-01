@@ -49,9 +49,13 @@ document.addEventListener("submit", (event) => {
         if (!target) {
 
         }
-        // commandDelete({ del, source }, 2)
+        let { Nome } = source;
+        let { indexStart, indexEnd } = target;
+        let aux = { Nome, indexStart, indexEnd };
+        commandDelete(["del", source.Nome], 2); //delete a GAMBIARRA
+        registerAddedByInput.push(aux);
 
-        // console.log(typeofsource);
+
     }
     else {
         warning("commandType not recognized");
@@ -511,7 +515,8 @@ function commandDelete(command, requiredNumberCommands) {
         item.register.style.backgroundColor = PALETTE.toBeRemoved;// dont remove it just yet
         item.color = PALETTE.empty; //IMPORTANT if its red than it was already removed, needs to be repainted in goind back
     }
-    registerAddedByInput = registerAddedByInput.filter(obj => obj.Nome !== name);// recives itself without the named element
+    indexFirstRegister = registerToBeDeleted.indexStart
+    registerAddedByInput = registerAddedByInput.filter(obj => obj.indexStart !== indexFirstRegister);//removes all the references to this space
     return false
 
 }
