@@ -44,8 +44,7 @@ document.addEventListener("submit", (event) => {
         if (numberCommandElements === requiredNumberCommands) {
             const name = command[1];
             const quantityOfRegisters = parseInt(command[2]);
-            const alreadyExists = Array.from(history.children).some(el => el.textContent.includes(name))
-
+            const alreadyExists = registerAddedByInput.find(obj => obj.Nome === name);//looks in the registerAddedByInput
             if (!alreadyExists) {
 
                 createRandomRegisters(quantityOfRegisters);
@@ -58,7 +57,7 @@ document.addEventListener("submit", (event) => {
                 attachRadioListeners();
 
                 historyElement.className = "box";
-                historyElement.textContent = name + " jnt: " + quantityOfRegisters;
+                historyElement.textContent = name + " qnt: " + quantityOfRegisters;
                 historyElement.value = name;
 
                 history.appendChild(historyElement);
@@ -149,6 +148,9 @@ document.addEventListener("submit", (event) => {
                     indexEnd: endIndex
                 })
             }
+
+            //atualizar historico
+
 
 
 
