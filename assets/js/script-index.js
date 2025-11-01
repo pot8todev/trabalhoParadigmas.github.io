@@ -5,12 +5,14 @@ const PALETTE = {
     recentlyOccupied: '#6C3BAA',
     occupied: 'purple',
 };
-let defaultRegisters = [];// {register, color, name}
+let defaultRegisters = [];// {register, color}
 let lastAlocated = [];
 let randomRegisterAmount = 0;
+let registerAddedByInput = []; /// {register, color, name}/
 
 // recognize the command
 document.addEventListener("submit", (event) => {
+
     event.preventDefault();
     const history = document.querySelector((".history"));
     const historyElement = document.createElement("div");
@@ -19,6 +21,8 @@ document.addEventListener("submit", (event) => {
     const oldButton = document.getElementById("mainButton");
     const oldButtonClone = oldButton.cloneNode(true); //
     var texto = input.value.trim(); //user input text
+
+    let exit = 0; //shows if nothing went wrong
     // console.log(texto);
     input.value = " ";// resets the textbox
 
@@ -31,21 +35,19 @@ document.addEventListener("submit", (event) => {
     // Run your algorithm after generating new registers
 
     // --- Extract command ---
-    const commandParts = texto.trim().split(" ");
-    const numberCommandElements = commandParts.length;
+    const command = texto.trim().split(" ");
+    const numberCommandElements = command.length;
     // console.log(commandParts.length);
-    const command = commandParts[0]
-    if (command === "new") {
+    const commandType = command[0]
+    if (commandType === "new") {
         const requiredNumberCommands = 3;// <new><name><amount>
         if (numberCommandElements === requiredNumberCommands) {
-            const name = commandParts[1];
-            const quantityOfRegisters = parseInt(commandParts[2]);
+            const name = command[1];
+            const quantityOfRegisters = parseInt(command[2]);
             const alreadyExists = Array.from(history.children).some(el => el.textContent.includes(name))
 
             if (!alreadyExists) {
 
-                console.log("Nome:", name);
-                console.log("quantidade:", quantityOfRegisters);
                 createRandomRegisters(quantityOfRegisters);
 
                 // Update global variable if needed
@@ -54,63 +56,112 @@ document.addEventListener("submit", (event) => {
                 // Now run the allocation algorithm
                 allocationStrategy(quantityOfRegisters);
                 attachRadioListeners();
+
                 historyElement.className = "box";
-                historyElement.textContent = name + " : " + quantityOfRegisters;
+                historyElement.textContent = name + " jnt: " + quantityOfRegisters;
                 historyElement.value = name;
 
                 history.appendChild(historyElement);
+
             }
             else {
                 warning("sorry, this name is already in use, chose another");
+                exit = 1;
             }
         }
         else {
             warning(numberCommandElements < requiredNumberCommands ? "too few" : "too many", "commands");
+            exit = 1;
         }
     }
-    else if (command === "del" || command === "delete") {
+    else if (commandType === "del" || commandType === "delete") {
         const requiredNumberCommands = 2;//<del><name>
-
+        const name = command[1];
+        // const alreadyExists = Array.from(history.children).some(el => el.textContent.includes(name))//looks in history
+        const alreadyExists = registerAddedByInput.find(obj => obj.Nome === name);//looks in the registerAddedByInput
         if (numberCommandElements === requiredNumberCommands) {
+            if (alreadyExists) {
+                const registerToBeDeleted = alreadyExists;
+                console.log("del worked");
+                console.log(name);
+                for (let index = registerToBeDeleted.indexStart; index <= registerToBeDeleted.indexEnd; index++) {
+                    const item = defaultRegisters[index];
+                    // console.log(index);
+                    item.register.style.backgroundColor = PALETTE.empty;
+                    // item.color = PALETTE.empty;
+                }
+
+            }
+            else {
+
+                warning("sorry, unable to find");
+                exit = 1;
+            }
 
         }
         else {
-
             warning(numberCommandElements < requiredNumberCommands ? "too few" : "too many", "commands");
+            exit = 1;
         }
 
 
     }
-    // --- substitui o botão ---
-    const newButton = document.createElement("button");
-    newButton.id = "confirmButton";
-    newButton.textContent = "Confirm";
-    newButton.type = "button"; // importante! evita submeter de novo o form
+    else {
+        warning("commandType not recognized");
+        exit = 1;
+
+    }
+    if (!exit) {
+        // --- substitui o botão ---
+        const newButton = document.createElement("button");
+        newButton.id = "confirmButton";
+        newButton.textContent = "Confirm";
+        newButton.type = "button"; // importante! evita submeter de novo o form
 
 
-    // substitui no DOM
-    oldButton.replaceWith(newButton);
+        // substitui no DOM
+        oldButton.replaceWith(newButton);
 
-    input.style.display = "none";
-    // adiciona funcionalidade ao novo botão
-    newButton.addEventListener("click", () => {
-        console.log("Confirmed!");
-        defaultRegisters.forEach(item => {
-            if (item.register.style.backgroundColor === PALETTE.correctAnswer) {
-                item.color = PALETTE.lastAlocated;
+        input.style.display = "none";
+        // adiciona funcionalidade ao novo botão
+        newButton.addEventListener("click", () => {
+            console.log("Confirmed!");
+
+            let startIndex = -1, endIndex = -1;
+            for (let index = 0; index < defaultRegisters.length; index++) {
+                const item = defaultRegisters[index];
+
+                if (item.register.style.backgroundColor === PALETTE.correctAnswer) {
+                    if (startIndex === -1) startIndex = index;// storing the information of the blue elements
+                    endIndex = index;
+                    item.color = PALETTE.lastAlocated;
+                }
+
+                if (item.register.style.backgroundColor === PALETTE.lastAlocated) {
+                    item.color = PALETTE.recentlyOccupied;
+                }
+                item.register.style.backgroundColor = item.color;
+            };
+            if (startIndex != -1) {
+                registerAddedByInput.push({
+                    Nome: command[1],
+                    indexStart: startIndex,
+                    indexEnd: endIndex
+                })
             }
-            if (item.register.style.backgroundColor === PALETTE.lastAlocated) {
-                item.color = PALETTE.recentlyOccupied;
-            }
-            item.register.style.backgroundColor = item.color;
+
+
+
+
+            randomContainer.innerHTML = ""; // remove last input registers
+            input.style.display = "block";
+            newButton.replaceWith(oldButtonClone);
+            randomRegisterAmount = 0;//random registers amount to 0 after being alocated
         });
-
-
-        randomContainer.innerHTML = ""; // remove all children
-        input.style.display = "block";
-        newButton.replaceWith(oldButtonClone);
-        randomRegisterAmount = 0;
-    });
+    }
+    else {//if problem was detected in user input, exit == 1, so we reset to 0
+        exit = 0;
+    }
 })
 // Main part of the code
 document.addEventListener('DOMContentLoaded', () => {
@@ -167,38 +218,40 @@ function createDefaultRegisters(defaultRegisters, lastAlocated) {
     const registerAmount = 40;
 
     // --- Create static registers ---
-    // TOFIX  change name of variables
     let isLastAlocated = false;
-    let isFirst = true;
-    let isFirst_ever = true;
+    let isFirstOfRow = true;
+    let isFirstRegisterCreated = true;
 
     for (let i = 0; i < registerAmount; i++) {
-        const register = document.createElement('div');
-        let isRegisterOccupied = Math.random() < 0.2;
-        register.className = 'register';
+        const HTMLregister = document.createElement('div');
+        let isRegisterOccupied = Math.random() < 0.2; //random odds of being painted "occupied"
+        HTMLregister.className = 'register';
 
-        if (isRegisterOccupied) {// odds of beign occupied
+
+        //colloring Logic
+        if (isRegisterOccupied) {
             if (isLastAlocated) {
-                lastAlocated.push(register);
-            } else if (isFirst_ever || (isFirst && getRandomInt(1, 10) < 2)) {
+                lastAlocated.push(HTMLregister);
+                //odds of being pushed in the "lastAlocated" queue
+            } else if (isFirstRegisterCreated || (isFirstOfRow && getRandomInt(1, 10) < 2)) {
                 lastAlocated.length = 0;//to empty the vector
-                lastAlocated.push(register);
+                lastAlocated.push(HTMLregister);
 
                 isLastAlocated = true;
-                isFirst = false;
+                isFirstOfRow = false;
             } else {
-                isFirst = false;
+                isFirstOfRow = false;
                 isLastAlocated = false;
             }
-            defaultRegisters.push({ register, color: PALETTE.occupied });
-            isFirst_ever = false;
-        } else {
-            isFirst = true;
+            defaultRegisters.push({ register: HTMLregister, color: PALETTE.occupied });
+            isFirstRegisterCreated = false;
+        } else {//break the sequence, preparing to  the next
+            isFirstOfRow = true;
             isLastAlocated = false;
-            defaultRegisters.push({ register, color: PALETTE.empty });
+            defaultRegisters.push({ register: HTMLregister, color: PALETTE.empty });
         }
 
-        container.appendChild(register);
+        container.appendChild(HTMLregister);
     }
 
 }
@@ -206,6 +259,8 @@ function createDefaultRegisters(defaultRegisters, lastAlocated) {
 //----------- Allocation algorithms ----------------
 
 // ----- Global function -----
+
+// will to the white registers
 function allocationStrategy(randomRegisterAmount) {
     const selected = document.querySelector('input[name="checked"]:checked').value;
     // console.log("Selected:", selected);
@@ -260,7 +315,7 @@ function firstFit(defaultRegisters, randomRegisterAmount) {
     }
 
     if (!foundMatch) {
-        console.log("nao ha lugar valido");
+        // console.log("nao ha lugar valido");
     }
     return foundMatch;
 }
