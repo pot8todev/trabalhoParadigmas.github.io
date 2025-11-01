@@ -20,7 +20,7 @@ document.addEventListener("submit", (event) => {
     const oldButtonClone = oldButton.cloneNode(true); //
     var texto = input.value.trim(); //user input text
 
-    let exit = 0; //shows if nothing went wrong
+    let error = false; //shows if nothing went wrong
     // console.log(texto);
     input.value = " ";// resets the textbox
 
@@ -30,80 +30,20 @@ document.addEventListener("submit", (event) => {
     randomContainer.innerHTML = ""; // remove all children
 
 
-    // Run your algorithm after generating new registers
-
-    // --- Extract command ---
     const command = texto.trim().split(" ");
-    const numberCommandElements = command.length;
-    // console.log(commandParts.length);
     const commandType = command[0]
     if (commandType === "new") {
-        const requiredNumberCommands = 3;// <new><name><amount>
-        if (numberCommandElements === requiredNumberCommands) {
-            const name = command[1];
-            const quantityOfRegisters = parseInt(command[2]);
-            const alreadyExists = registerAddedByInput.find(obj => obj.Nome === name);//looks in the registerAddedByInput
-            if (!alreadyExists) {
-
-                createRandomRegisters(quantityOfRegisters);
-
-                // Update global variable if needed
-                randomRegisterAmount = quantityOfRegisters;
-
-                // Now run the allocation algorithm
-                allocationStrategy(quantityOfRegisters);
-                attachRadioListeners();
-
-            }
-            else {
-                warning("sorry, this name is already in use, chose another");
-                exit = 1;
-            }
-        }
-        else {
-            warning(numberCommandElements < requiredNumberCommands ? "too few" : "too many", "commands");
-            exit = 1;
-        }
+        error = commandCreate(command, 3);
     }
     else if (commandType === "del" || commandType === "delete") {
-        const requiredNumberCommands = 2;//<del><name>
-        const name = command[1];
-        // const alreadyExists = Array.from(history.children).some(el => el.textContent.includes(name))//looks in history
-        const alreadyExists = registerAddedByInput.find(obj => obj.Nome === name);//looks in the registerAddedByInput
-        if (numberCommandElements === requiredNumberCommands) {
-            if (alreadyExists) {
-                const registerToBeDeleted = alreadyExists;
-                console.log("del worked");
-                console.log(name);
-                for (let index = registerToBeDeleted.indexStart; index <= registerToBeDeleted.indexEnd; index++) {
-                    const item = defaultRegisters[index];
-                    // console.log(index);
-                    item.register.style.backgroundColor = PALETTE.empty;
-                    item.color = PALETTE.empty;
-                }
-                registerAddedByInput = registerAddedByInput.filter(obj => obj.Nome !== name);// recives itself without the named element
-
-            }
-            else {
-
-                warning("sorry, unable to find");
-                exit = 1;
-            }
-
-        }
-        else {
-            warning(numberCommandElements < requiredNumberCommands ? "too few" : "too many", "commands");
-            exit = 1;
-        }
-
-
+        error = commandDelete(command, 2);
     }
     else {
         warning("commandType not recognized");
-        exit = 1;
+        error = true;
 
     }
-    if (!exit) {
+    if (!error) {
         // --- substitui o botão ---
         const newButton = document.createElement("button");
         newButton.id = "confirmButton";
@@ -169,7 +109,7 @@ document.addEventListener("submit", (event) => {
         });
     }
     else {//if problem was detected in user input, exit == 1, so we reset to 0
-        exit = 0;
+        error = 0;
     }
 })
 // Main part of the code
@@ -501,3 +441,62 @@ function warning(warningText) {
         }
     });
 }
+
+
+function commandCreate(command, requiredNumberCommands) {
+    const numberCommands = command.length;
+    const name = command[1];
+    const quantityOfRegisters = parseInt(command[2]);
+
+    const alreadyExists = registerAddedByInput.find(obj => obj.Nome === name);//looks in the registerAddedByInput
+    if (alreadyExists) {
+        warning("sorry, this name is already in use, chose another");
+        error = true;
+        return true
+    }
+    if (numberCommands != requiredNumberCommands) {
+        warning(numberCommands < requiredNumberCommands ? "too few" : "too many", "commands");
+        error = true;
+    }
+    createRandomRegisters(quantityOfRegisters);
+
+    // Update global variable if needed
+    randomRegisterAmount = quantityOfRegisters;
+
+    // Now run the allocation algorithm
+    allocationStrategy(quantityOfRegisters);
+    attachRadioListeners();
+
+}
+
+function commandDelete(command, requiredNumberCommands) {
+
+    const numberCommandElements = command.length;
+    const name = command[1];
+
+    const alreadyExists = registerAddedByInput.find(obj => obj.Nome === name);//looks in the registerAddedByInput
+    if (typeof requiredNumberCommands !== 'number') {
+        warning("requiredNumberCommands must be a number");
+        return true;
+    }
+    else if (!alreadyExists) {
+        warning("sorry, unable to find");
+        return true;
+    }
+    else if (numberCommandElements != requiredNumberCommands) {
+        warning(numberCommandElements < requiredNumberCommands ? "too few" : "too many", "commands");
+        return true;
+    }
+
+    const registerToBeDeleted = alreadyExists;
+    for (let index = registerToBeDeleted.indexStart; index <= registerToBeDeleted.indexEnd; index++) {
+        const item = defaultRegisters[index];
+        // console.log(index);
+        item.register.style.backgroundColor = PALETTE.empty;
+        item.color = PALETTE.empty;
+    }
+    registerAddedByInput = registerAddedByInput.filter(obj => obj.Nome !== name);// recives itself without the named element
+    return false
+
+}
+
