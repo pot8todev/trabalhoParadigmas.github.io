@@ -4,6 +4,7 @@ body {
     flex-direction: column;
     /* stack header, main, footer vertically */
     min-height: 100vh;
+
     /* full viewport height */
     margin: 0;
     padding: 0;
