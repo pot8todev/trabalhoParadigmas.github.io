@@ -14,8 +14,6 @@ let registerAddedByInput = []; /// {register, color, name}/
 document.addEventListener("submit", (event) => {
 
     event.preventDefault();
-    const history = document.querySelector((".history"));
-    const historyElement = document.createElement("div");
 
     const input = document.querySelector(".submit");
     const oldButton = document.getElementById("mainButton");
@@ -56,12 +54,6 @@ document.addEventListener("submit", (event) => {
                 allocationStrategy(quantityOfRegisters);
                 attachRadioListeners();
 
-                historyElement.className = "box";
-                historyElement.textContent = name + " qnt: " + quantityOfRegisters;
-                historyElement.value = name;
-
-                history.appendChild(historyElement);
-
             }
             else {
                 warning("sorry, this name is already in use, chose another");
@@ -87,8 +79,9 @@ document.addEventListener("submit", (event) => {
                     const item = defaultRegisters[index];
                     // console.log(index);
                     item.register.style.backgroundColor = PALETTE.empty;
-                    // item.color = PALETTE.empty;
+                    item.color = PALETTE.empty;
                 }
+                registerAddedByInput = registerAddedByInput.filter(obj => obj.Nome !== name);// recives itself without the named element
 
             }
             else {
@@ -144,12 +137,26 @@ document.addEventListener("submit", (event) => {
             if (startIndex != -1) {
                 registerAddedByInput.push({
                     Nome: command[1],
-                    indexStart: startIndex,
-                    indexEnd: endIndex
+                    indexStart: Number(startIndex),
+                    indexEnd: Number(endIndex),
                 })
             }
+            const history = document.querySelector((".history"));
+            history.innerHTML = "";
 
             //atualizar historico
+            registerAddedByInput.forEach(element => {
+                let quantityOfRegisters = element.indexEnd - element.indexStart + 1;
+
+                console.log("number: ", quantityOfRegisters);
+
+                const historyElement = document.createElement("div");
+                historyElement.className = "box";
+                historyElement.textContent = `${element.Nome} qnt:${quantityOfRegisters}`;
+                // historyElement.value = name;
+
+                history.appendChild(historyElement);
+            })
 
 
 
@@ -409,7 +416,7 @@ function bestFit(defaultRegisters, randomRegisterAmount) {
     for (let i = 0; i < randomRegisterAmount; i++) {
         bestBlock[i].register.style.backgroundColor = PALETTE.correctAnswer;
     }
-    console.log(`Allocated ${randomRegisterAmount} registers in block of size ${bestBlock.length}`);
+    console.log(`Allocated ${randomRegisterAmount} registers in block of size ${bestBlock.length} `);
     return true;
 }
 function worstFit(defaultRegisters, randomRegisterAmount) {
@@ -469,7 +476,7 @@ function worstFit(defaultRegisters, randomRegisterAmount) {
     for (let i = 0; i < randomRegisterAmount; i++) {
         worseBlock[i].register.style.backgroundColor = PALETTE.correctAnswer;
     }
-    console.log(`Allocated ${randomRegisterAmount} registers in block of size ${worseBlock.length}`);
+    console.log(`Allocated ${randomRegisterAmount} registers in block of size ${worseBlock.length} `);
     return true;
 }
 
