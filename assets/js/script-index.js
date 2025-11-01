@@ -4,6 +4,7 @@ const PALETTE = {
     lastAlocated: 'salmon',
     recentlyOccupied: '#6C3BAA',
     occupied: 'purple',
+    toBeRemoved: '#F1202B',
 };
 let defaultRegisters = [];// {register, color}
 let lastAlocated = [];
@@ -37,6 +38,20 @@ document.addEventListener("submit", (event) => {
     }
     else if (commandType === "del" || commandType === "delete") {
         error = commandDelete(command, 2);
+    }
+
+    else if (command[1] === "=") {
+        const source = registerAddedByInput.find(obj => obj.Nome === command[0]);
+        const target = registerAddedByInput.find(obj => obj.Nome === command[2]);
+        if (!source) {
+
+        }
+        if (!target) {
+
+        }
+        // commandDelete({ del, source }, 2)
+
+        // console.log(typeofsource);
     }
     else {
         warning("commandType not recognized");
@@ -102,10 +117,12 @@ document.addEventListener("submit", (event) => {
 
 
 
+            resetRegisters(defaultRegisters);
             randomContainer.innerHTML = ""; // remove last input registers
             input.style.display = "block";
             newButton.replaceWith(oldButtonClone);
             randomRegisterAmount = 0;//random registers amount to 0 after being alocated
+
         });
     }
     else {//if problem was detected in user input, exit == 1, so we reset to 0
@@ -491,9 +508,8 @@ function commandDelete(command, requiredNumberCommands) {
     const registerToBeDeleted = alreadyExists;
     for (let index = registerToBeDeleted.indexStart; index <= registerToBeDeleted.indexEnd; index++) {
         const item = defaultRegisters[index];
-        // console.log(index);
-        item.register.style.backgroundColor = PALETTE.empty;
-        item.color = PALETTE.empty;
+        item.register.style.backgroundColor = PALETTE.toBeRemoved;// dont remove it just yet
+        item.color = PALETTE.empty; //IMPORTANT if its red than it was already removed, needs to be repainted in goind back
     }
     registerAddedByInput = registerAddedByInput.filter(obj => obj.Nome !== name);// recives itself without the named element
     return false
