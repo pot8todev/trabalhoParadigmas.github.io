@@ -26,9 +26,9 @@ document.addEventListener("submit", (event) => {
     input.value = " ";// resets the textbox
 
 
-    // --- Destroy previous random registers ---
-    const randomContainer = document.querySelector(".randomRegister-Container");
-    randomContainer.innerHTML = ""; // remove all children
+    // // --- Destroy previous random registers ---
+    // const randomContainer = document.querySelector(".randomRegister-Container");
+    // randomContainer.innerHTML = ""; // remove all children
 
 
     const command = texto.trim().split(" ");
@@ -51,7 +51,7 @@ document.addEventListener("submit", (event) => {
         }
         let { Nome } = source;
         let { indexStart, indexEnd } = target;
-        let aux = { Nome, indexStart, indexEnd };
+        let aux = { Nome, indexStart, indexEnd, isredundant: true };
         commandDelete(["del", source.Nome], 2); //delete a GAMBIARRA
         registerAddedByInput.push(aux);
 
@@ -113,6 +113,20 @@ document.addEventListener("submit", (event) => {
                 historyElement.className = "box";
                 historyElement.textContent = `${element.Nome} qnt:${quantityOfRegisters}`;
                 // historyElement.value = name;
+                if (element.isredundant) {
+
+                    historyElement.style.backgroundColor = 'pink';
+
+                }
+                historyElement.addEventListener("mouseover", () => {
+                    for (let i = element.indexStart; i <= element.indexEnd; i++) {
+                        defaultRegisters[i].register.style.backgroundColor = 'pink';
+                    }
+                });
+
+                historyElement.addEventListener("mouseout", () => {
+                    resetRegisters(defaultRegisters);
+                });
 
                 history.appendChild(historyElement);
             })
@@ -121,8 +135,8 @@ document.addEventListener("submit", (event) => {
 
 
 
-            resetRegisters(defaultRegisters);
-            randomContainer.innerHTML = ""; // remove last input registers
+            // resetRegisters(defaultRegisters);
+            // randomContainer.innerHTML = ""; // remove last input registers
             input.style.display = "block";
             newButton.replaceWith(oldButtonClone);
             randomRegisterAmount = 0;//random registers amount to 0 after being alocated
@@ -479,7 +493,7 @@ function commandCreate(command, requiredNumberCommands) {
         warning(numberCommands < requiredNumberCommands ? "too few" : "too many", "commands");
         error = true;
     }
-    createRandomRegisters(quantityOfRegisters);
+    // createRandomRegisters(quantityOfRegisters);
 
     // Update global variable if needed
     randomRegisterAmount = quantityOfRegisters;
