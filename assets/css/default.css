@@ -17,7 +17,7 @@ body {
 
     overflow-x: hidden;
     /* prevent horizontal scroll */
-    background-color: #fffdfa;
+    background-color: darkseagreen;
 }
 
 .wrapper {
@@ -51,6 +51,12 @@ h1,
 p {
     text-align: center;
     margin: 0.5rem 0;
+    transition: 0.5s;
+
+}
+
+h1:hover {
+    text-decoration: underline;
 }
 
 /* Media queries for small devices */
@@ -63,6 +69,12 @@ p {
     .wrapper {
         padding: 1rem;
         border-radius: 10px;
+    }
+
+    h1:hover {
+        text-decoration: underline;
+        cursor: pointer;
+        /* show it’s interactive */
     }
 }
 
