@@ -186,8 +186,8 @@ function createRandomRegisters(randomRegisterAmount) {
 function createDefaultRegisters(defaultRegisters, lastAlocated) {
 
     const container = document.querySelector('.register-container');
-    let registerAmount = 40;
-    let randomness = 0.2;
+    let registerAmount = 30;
+    let randomness = 0.3;
     if (isMobile()) {
         registerAmount = 20;
         randomness = 0.4

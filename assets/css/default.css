@@ -1,24 +1,70 @@
-/* ===== Body ===== */
+/* Base styles for desktop and mobile */
 body {
+    min-width: 100vw;
     min-height: 100vh;
 
-    background-color: #fffdfa;
-    /* full viewport height */
-    margin: 0;
-    padding: 0;
+    padding: 1rem;
+    /* small padding for mobile-friendly layout */
     font-family: Arial, sans-serif;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* vertical centering */
+    align-items: center;
+    /* horizontal centering */
+
+    overflow-x: hidden;
+    /* prevent horizontal scroll */
+    background-color: #fffdfa;
 }
 
 .wrapper {
-    height: 87vh;
-    width: 100vw;
+    width: 100vh;
+    height: 100vh;
+    /* take full width on mobile */
+    max-width: 800px;
+    max-height: 90vh;
+    /* limit width on larger screens */
+    padding: 1.5rem;
     display: flex;
+    flex-direction: column;
+    /* stack content vertically */
     justify-content: center;
+    align-items: center;
     background-color: beige;
     border: 2px solid black;
     border-radius: 15px;
+    box-sizing: border-box;
+    /* Zoom out */
+
+    overflow: auto;
+    transform: scale(0.9);
+    /* 90% of original size */
+    transform-origin: center;
+    /* scale from center */
 }
 
+/* Optional: responsive text and spacing */
+h1,
+p {
+    text-align: center;
+    margin: 0.5rem 0;
+}
+
+/* Media queries for small devices */
+@media (max-width: 480px) {
+    body {
+        padding: 0.5rem;
+        /* reduce padding */
+    }
+
+    .wrapper {
+        padding: 1rem;
+        border-radius: 10px;
+    }
+}
 
 /* ===== Box container ===== */
 .container {
