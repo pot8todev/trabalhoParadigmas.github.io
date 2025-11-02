@@ -54,7 +54,7 @@ document.addEventListener("submit", (event) => {
         let { indexStart, indexEnd } = target;
         let aux = { Nome, indexStart, indexEnd };
 
-        commandDelete(["del", source.Nome], 2); //delete a GAMBIARRA
+        error = commandDelete(["del", source.Nome], 2); //delete a GAMBIARRA
         registerAddedByInput.push(aux);
 
 
@@ -517,7 +517,6 @@ function warning(warningText) {
 function commandCreate(command, requiredNumberCommands) {
     const numberCommands = command.length;
     const name = command[1];
-    const quantityOfRegisters = parseInt(command[2]);
 
     const alreadyExists = registerAddedByInput.find(obj => obj.Nome === name);//looks in the registerAddedByInput
     if (alreadyExists) {
@@ -528,7 +527,9 @@ function commandCreate(command, requiredNumberCommands) {
     if (numberCommands != requiredNumberCommands) {
         warning(numberCommands < requiredNumberCommands ? "too few" : "too many", "commands");
         error = true;
+        return error
     }
+    const quantityOfRegisters = parseInt(command[2]);
     // createRandomRegisters(quantityOfRegisters);
 
     // Update global variable if needed
