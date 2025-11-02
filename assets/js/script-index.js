@@ -1,10 +1,10 @@
-const PALETTE = {
+const PALETTE = { //poorly implemented
     empty: 'white',
     correctAnswer: 'blue',
     lastAlocated: 'salmon',
     recentlyOccupied: '#6C3BAA',
     occupied: 'purple',
-    toBeRemoved: '#F1202B',
+    toBeRemoved: 'red',
 };
 let defaultRegisters = [];// {register, color}
 let lastAlocated = [];
@@ -44,14 +44,15 @@ document.addEventListener("submit", (event) => {
         const source = registerAddedByInput.find(obj => obj.Nome === command[0]);
         const target = registerAddedByInput.find(obj => obj.Nome === command[2]);
         if (!source) {
-
+            warning(`${source} not found`);
         }
         if (!target) {
-
+            warning(`${target} not found`);
         }
         let { Nome } = source;
         let { indexStart, indexEnd } = target;
-        let aux = { Nome, indexStart, indexEnd, isredundant: true };
+        let aux = { Nome, indexStart, indexEnd };
+
         commandDelete(["del", source.Nome], 2); //delete a GAMBIARRA
         registerAddedByInput.push(aux);
 
@@ -87,12 +88,15 @@ document.addEventListener("submit", (event) => {
                     endIndex = index;
                     item.color = PALETTE.lastAlocated;
                 }
-
                 if (item.register.style.backgroundColor === PALETTE.lastAlocated) {
                     item.color = PALETTE.recentlyOccupied;
                 }
-                item.register.style.backgroundColor = item.color;
+                if (item.register.style.backgroundColor === PALETTE.toBeRemoved) {
+                    console.log("hello");
+                    item.color = PALETTE.empty;
+                }
             };
+            resetRegisters(defaultRegisters);
             if (startIndex != -1) {
                 registerAddedByInput.push({
                     Nome: command[1],
@@ -100,44 +104,10 @@ document.addEventListener("submit", (event) => {
                     indexEnd: Number(endIndex),
                 })
             }
-            const history = document.querySelector((".history"));
-            history.innerHTML = "";
-
-            //atualizar historico
-            registerAddedByInput.forEach(element => {
-                let quantityOfRegisters = element.indexEnd - element.indexStart + 1;
-
-                console.log("number: ", quantityOfRegisters);
-
-                const historyElement = document.createElement("div");
-                historyElement.className = "box";
-                historyElement.textContent = `${element.Nome} qnt:${quantityOfRegisters}`;
-                // historyElement.value = name;
-                if (element.isredundant) {
-
-                    historyElement.style.backgroundColor = 'pink';
-
-                }
-                historyElement.addEventListener("mouseover", () => {
-                    for (let i = element.indexStart; i <= element.indexEnd; i++) {
-                        defaultRegisters[i].register.style.backgroundColor = 'pink';
-                    }
-                });
-
-                historyElement.addEventListener("mouseout", () => {
-                    resetRegisters(defaultRegisters);
-                });
-
-                history.appendChild(historyElement);
-            })
+            createHistoryBoxes();
 
 
-
-
-
-            // resetRegisters(defaultRegisters);
-            // randomContainer.innerHTML = ""; // remove last input registers
-            input.style.display = "block";
+            input.style.display = "block";// to revert the button
             newButton.replaceWith(oldButtonClone);
             randomRegisterAmount = 0;//random registers amount to 0 after being alocated
 
@@ -149,7 +119,6 @@ document.addEventListener("submit", (event) => {
 })
 // Main part of the code
 document.addEventListener('DOMContentLoaded', () => {
-    // randomRegisterAmount = getRandomInt(1, 7);
 
     lastAlocated = [];
     // createRandomRegisters(randomRegisterAmount);
@@ -165,8 +134,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
 //----- Utility ------
 
-//random integer generator
-function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function groups(array) {
+    const groups = {};
+
+    array.forEach(item => {
+        const key = item.indexStart;
+        if (!groups[key]) {
+            groups[key] = [];
+        }
+        groups[key].push(item);
+    });
+
+    return groups;
+}
+
+
+// [{Nome: "A", ...}, {Nome: "C", ...}]
+function getRandomRGBA(alpha = 1) {
+    const r = getRandomInt(0, 255);
+    const g = getRandomInt(0, 255);
+    const b = getRandomInt(0, 255);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 function sleep(seconds) {
     return new Promise(resolve => {
         setTimeout(resolve, seconds * 1000);
@@ -237,6 +230,37 @@ function createDefaultRegisters(defaultRegisters, lastAlocated) {
         }
         item.register.style.backgroundColor = item.color;
     });
+
+}
+function createHistoryBoxes() {
+
+    const history = document.querySelector((".history"));
+    history.innerHTML = "";
+
+    //atualizar historico
+    registerAddedByInput.forEach(element => {
+        let quantityOfRegisters = element.indexEnd - element.indexStart + 1;
+
+        const historyElement = document.createElement("div");
+        historyElement.className = "box";
+        historyElement.textContent = `${element.Nome} qnt:${quantityOfRegisters}`;
+
+
+        // Highlight duplicates
+        historyElement.addEventListener("mouseover", () => {
+            for (let i = element.indexStart; i <= element.indexEnd; i++) {
+                defaultRegisters[i].register.style.backgroundColor = 'pink';
+
+            }
+        });
+
+        historyElement.addEventListener("mouseout", () => {
+            resetRegisters(defaultRegisters);
+        });
+
+        history.appendChild(historyElement);
+    })
+
 
 }
 
@@ -475,6 +499,7 @@ function warning(warningText) {
             item.register.style.backgroundColor = "pink";
         }
     });
+    resetRegisters(defaultRegisters);
 }
 
 
@@ -527,7 +552,7 @@ function commandDelete(command, requiredNumberCommands) {
     for (let index = registerToBeDeleted.indexStart; index <= registerToBeDeleted.indexEnd; index++) {
         const item = defaultRegisters[index];
         item.register.style.backgroundColor = PALETTE.toBeRemoved;// dont remove it just yet
-        item.color = PALETTE.empty; //IMPORTANT if its red than it was already removed, needs to be repainted in goind back
+        item.color = PALETTE.toBeRemoved;
     }
     indexFirstRegister = registerToBeDeleted.indexStart
     registerAddedByInput = registerAddedByInput.filter(obj => obj.indexStart !== indexFirstRegister);//removes all the references to this space
