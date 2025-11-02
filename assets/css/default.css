@@ -1,65 +1,38 @@
 /* ===== Body ===== */
 body {
-    display: flex;
-    flex-direction: column;
-    /* stack header, main, footer vertically */
     min-height: 100vh;
 
+    background-color: #fffdfa;
     /* full viewport height */
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background-color: lightgray;
-}
-
-footer {
-    background-color: #333;
-    color: #fffdfa;
-    padding: 15px 20px;
-}
-
-
-main {
-    height: 56vh;
-    width: 50vh;
-}
-
-/* ===== Header and Footer ===== */
-header,
-footer {
-    background-color: #333;
-    color: white;
-    padding: 10px;
-    text-align: center;
 }
 
 .wrapper {
+    height: 87vh;
+    width: 100vw;
     display: flex;
-    /* flex-direction: column; */
-
+    justify-content: center;
+    background-color: beige;
+    border: 2px solid black;
+    border-radius: 15px;
 }
 
 
 /* ===== Box container ===== */
 .container {
-    display: flex;
-    flex-direction: column;
-
-    align-items: center;
     text-align: center;
+    margin: 0 auto;
+
     /* horizontal alignment of boxes */
-    gap: 1rem;
-    padding: 20px;
-    justify-content: flex-start;
-    border: 2px solid black;
-    border-radius: 15px;
-    background-color: #fffdfa;
+    padding: 1rem;
+    /* right: 50%; */
 }
 
 /* ===== Box ===== */
 .box {
-    background-color: #fffdfa;
-    border: 1px solid #ccc;
+    border: 1px solid black;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 4px 5px rgba(0, 0, 0, 0.2);

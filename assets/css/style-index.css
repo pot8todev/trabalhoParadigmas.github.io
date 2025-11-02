@@ -1,44 +1,58 @@
 .radio-form {
 
+
     display: flex;
     justify-content: center;
     justify-items: center;
 }
 
-.input {
-    height: 20rem;
-    border-radius: 15px
-}
 
 .submit {
-    width: 20vh;
+    box-sizing: content-box;
+    margin: 1.5rem auto 2rem;
+}
+
+.submiText {
+    height: 1.5rem;
+    border-radius: 15px;
+    display: inline;
+    text-align: center;
+    /* center text horizontally */
+    line-height: 1.5rem;
+    /* vertically center text if single-line */
+    padding: 0 0.5rem;
+    /* optional horizontal padding */
+    box-sizing: border-box;
+    /* ensure padding doesn’t increase height */
+
 }
 
 .example {
+    box-sizing: content-box;
+    width: fit-content;
     background-color: rgb(18, 55, 34, 0.4);
-    gap: 0;
-    width: 20%;
+    padding: 1rem;
+    border-radius: 15px;
+}
 
+.example p {
+    margin: 0;
+    padding: 0 0.4rem 0;
+    ;
 }
 
 .randomRegister-Container,
 .register-container {
     display: flex;
-    flex-direction: row;
     gap: 0.2rem;
-
-    /*align in x*/
     justify-content: center;
-    /*align in y*/
     align-items: center;
 
     overflow-x: auto;
-    /* scroll horizontal se necessário */
-    padding: 10px;
-    margin: 2%;
-    /* wrap se não couber horizontalmente */
+    margin: 4%;
+    padding: 1%;
     flex-wrap: nowrap;
-    /* height: 87vh; */
+    height: auto;
 }
 
 .randomRegister-Container {
@@ -83,22 +97,23 @@
     transition: all 0.3s ease;
     /* cursor: pointer; */
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
 }
 
 .register:hover {
-    background-color: purple;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     transform: translateY(-2px);
     cursor: pointer;
 }
 
+.guide {
+    display: flex;
+}
+
 .historyContainer {
-    width: 50%;
-    height: 100%;
     /* border: 1px solid black; */
+    width: auto;
     border-radius: 15px;
-    box-sizing: border-box;
+    /* box-sizing: border-box; */
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
@@ -108,6 +123,7 @@
 }
 
 .history {
+    width: fit-content;
     margin: 1rem;
     width: 30%;
     border: 1px;

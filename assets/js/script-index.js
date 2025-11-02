@@ -16,10 +16,11 @@ document.addEventListener("submit", (event) => {
 
     event.preventDefault();
 
-    const input = document.querySelector(".submit");
+    const input = document.querySelector(".submiText");
     const oldButton = document.getElementById("mainButton");
     const oldButtonClone = oldButton.cloneNode(true); //
-    var texto = input.value.trim(); //user input text
+
+    var texto = input.value.trim().toLowerCase(); //user input text
 
     let error = false; //shows if nothing went wrong
     // console.log(texto);
@@ -107,7 +108,7 @@ document.addEventListener("submit", (event) => {
             createHistoryBoxes();
 
 
-            input.style.display = "block";// to revert the button
+            input.style.display = "inline";// to revert the button
             newButton.replaceWith(oldButtonClone);
             randomRegisterAmount = 0;//random registers amount to 0 after being alocated
 
@@ -185,7 +186,13 @@ function createRandomRegisters(randomRegisterAmount) {
 function createDefaultRegisters(defaultRegisters, lastAlocated) {
 
     const container = document.querySelector('.register-container');
-    const registerAmount = 40;
+    let registerAmount = 40;
+    let randomness = 0.2;
+    if (isMobile()) {
+        registerAmount = 20;
+        randomness = 0.4
+
+    }
 
     // --- Create static registers ---
     let isLastAlocated = false;
@@ -194,7 +201,7 @@ function createDefaultRegisters(defaultRegisters, lastAlocated) {
 
     for (let i = 0; i < registerAmount; i++) {
         const HTMLregister = document.createElement('div');
-        let isRegisterOccupied = Math.random() < 0.2; //random odds of being painted "occupied"
+        let isRegisterOccupied = Math.random() < randomness; //random odds of being painted "occupied"
         HTMLregister.className = 'register';
 
 
@@ -234,7 +241,7 @@ function createDefaultRegisters(defaultRegisters, lastAlocated) {
 }
 function createHistoryBoxes() {
 
-    const history = document.querySelector((".history"));
+    const history = document.querySelector((".historyContainer"));
     history.innerHTML = "";
 
     //atualizar historico
@@ -242,6 +249,7 @@ function createHistoryBoxes() {
         let quantityOfRegisters = element.indexEnd - element.indexStart + 1;
 
         const historyElement = document.createElement("div");
+        historyElement.className = "history";
         historyElement.className = "box";
         historyElement.textContent = `${element.Nome} qnt:${quantityOfRegisters}`;
 
@@ -263,17 +271,20 @@ function createHistoryBoxes() {
 
 
 }
+function isMobile() {
+    return window.innerWidth <= 768; // adjust breakpoint as needed
+}
 
+console.log(isMobile());
 //----------- Allocation algorithms ----------------
 
-// ----- Global function -----
 
 // will to the white registers
 function allocationStrategy(randomRegisterAmount) {
     const selected = document.querySelector('input[name="checked"]:checked').value;
-    // console.log("Selected:", selected);
+    console.log("hello");
+    console.log(selected);
     let foundMatch = false;
-
     switch (selected) {
         case 'first':
             resetRegisters(defaultRegisters);
