@@ -155,13 +155,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // createRandomRegisters(randomRegisterAmount);
     createDefaultRegisters(defaultRegisters, lastAlocated);
 
-    //if register exist in dR and lA
-    defaultRegisters.forEach(item => {
-        if (lastAlocated.some(last => last === item.register)) {
-            item.color = PALETTE.lastAlocated;
-        }
-        item.register.style.backgroundColor = item.color;
-    });
 
 
     // --- Define runAlgorithm inside same scope ---
@@ -237,6 +230,13 @@ function createDefaultRegisters(defaultRegisters, lastAlocated) {
 
         container.appendChild(HTMLregister);
     }
+    //if register exist in dR and lA
+    defaultRegisters.forEach(item => {
+        if (lastAlocated.some(last => last === item.register)) {
+            item.color = PALETTE.lastAlocated;
+        }
+        item.register.style.backgroundColor = item.color;
+    });
 
 }
 
